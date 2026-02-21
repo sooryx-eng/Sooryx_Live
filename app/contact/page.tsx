@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Mail, MessageSquare, Zap } from "lucide-react";
+import { Phone, Mail, Zap } from "lucide-react";
 import GlowingHeader from "../components/GlowingHeader";
 import SolarLineArt from "../components/SolarLineArt";
 
@@ -120,18 +120,7 @@ export default function ContactUs() {
                 </p>
               </div>
 
-              {/* Message */}
-              <div className="group">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-300 to-blue-100 flex items-center justify-center group-hover:shadow-lg transition-shadow">
-                    <MessageSquare size={24} className="text-blue-800" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-900">Available</h3>
-                </div>
-                <p className="text-slate-600 pl-15">
-                  Monday - Friday<br />9:00 AM - 6:00 PM IST
-                </p>
-              </div>
+
             </div>
           </motion.div>
 
