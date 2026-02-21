@@ -2,40 +2,106 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Mail, Lock, AlertCircle } from 'lucide-react'
+import { Phone, Shield, AlertCircle, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import GlowingHeader from '@/app/components/GlowingHeader'
 
 export default function BillShieldLogin() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [phone, setPhone] = useState('')
+  const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [otpSent, setOtpSent] = useState(false)
+  const [displayOtp, setDisplayOtp] = useState('') // For development - shows OTP on screen
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+    setLoading(true)
+
+    try {
+      if (!phone) {
+        setError('Please enter your phone number')
+        return
+      }
+      if (phone.length < 10) {
+        setError('Please enter a valid 10-digit phone number')
+        return
+      }
+
+      // Call API to send OTP
+      const response = await fetch('/api/billshield/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to send OTP. Please try again.')
+        return
+      }
+
+      setOtpSent(true)
+      setSuccess('OTP sent successfully!')
+      
+      // For development - display OTP on screen (remove in production)
+      if (data.otp) {
+        setDisplayOtp(data.otp)
+      }
+    } catch (err) {
+      setError('Failed to send OTP. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     try {
-      // Placeholder for auth logic
-      // For now, just validate fields
-      if (!email || !password) {
-        setError('Please fill in all fields')
+      if (!otp) {
+        setError('Please enter the OTP')
         return
       }
-      if (!email.includes('@')) {
-        setError('Please enter a valid email')
+      if (otp.length !== 6) {
+        setError('Please enter a valid 6-digit OTP')
         return
       }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // Call API to verify OTP
+      const response = await fetch('/api/billshield/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone, otp }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Invalid OTP. Please try again.')
+        setOtp('')
+        return
+      }
+
+      setSuccess('Login successful!')
       
-      // Redirect to dashboard or app
-      window.location.href = '/app/dashboard'
+      // Redirect to dashboard or BillShield page
+      setTimeout(() => {
+        window.location.href = '/billshield'
+      }, 1000)
     } catch (err) {
-      setError('Login failed. Please try again.')
+      setError('Verification failed. Please try again.')
+      setOtp('')
     } finally {
       setLoading(false)
     }
@@ -56,7 +122,7 @@ export default function BillShieldLogin() {
         <GlowingHeader as="h1" className="mb-4 text-4xl font-bold md:text-5xl">
           Welcome Back
         </GlowingHeader>
-        <p className="text-lg text-slate-600">Sign in to your BillShield account</p>
+        <p className="text-lg text-slate-600">Sign in with your phone number</p>
       </div>
 
       {/* Login Card */}
@@ -67,75 +133,145 @@ export default function BillShieldLogin() {
           transition={{ duration: 0.5 }}
           className="rounded-3xl border border-slate-200/70 bg-white/90 p-8 shadow-2xl backdrop-blur"
         >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-amber-500" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-slate-900 placeholder-slate-400 transition focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-200"
-                />
+          {!otpSent ? (
+            // Step 1: Enter phone number
+            <form onSubmit={handleSendOtp} className="space-y-6">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-amber-500" />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-slate-900 placeholder-slate-400 transition focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-200"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Password Field */}
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-amber-500" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-slate-900 placeholder-slate-400 transition focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-200"
-                />
-              </div>
-            </div>
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 rounded-xl bg-red-50 p-4"
+                >
+                  <AlertCircle className="size-5 text-red-600" />
+                  <p className="text-sm font-semibold text-red-700">{error}</p>
+                </motion.div>
+              )}
 
-            {/* Error Message */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 rounded-xl bg-red-50 p-4"
+              {/* Success Message */}
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 rounded-xl bg-green-50 p-4"
+                >
+                  <CheckCircle className="size-5 text-green-600" />
+                  <p className="text-sm font-semibold text-green-700">{success}</p>
+                </motion.div>
+              )}
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-3 font-bold text-white transition hover:shadow-lg disabled:opacity-50"
               >
-                <AlertCircle className="size-5 text-red-600" />
-                <p className="text-sm font-semibold text-red-700">{error}</p>
-              </motion.div>
-            )}
+                {loading ? 'Sending OTP...' : 'Send OTP'}
+              </motion.button>
+            </form>
+          ) : (
+            // Step 2: Enter OTP
+            <form onSubmit={handleVerifyOtp} className="space-y-6">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Enter OTP
+                </label>
+                <div className="relative">
+                  <Shield className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-amber-500" />
+                  <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="000000"
+                    maxLength={6}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-center text-2xl font-bold tracking-widest text-slate-900 placeholder-slate-400 transition focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-200"
+                  />
+                </div>
+                <p className="mt-2 text-xs text-slate-500">
+                  OTP sent to {phone}
+                </p>
+              </div>
 
-            {/* Sign In Button */}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-3 font-bold text-white transition hover:shadow-lg disabled:opacity-50"
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
-            </motion.button>
+              {/* Development OTP Display */}
+              {displayOtp && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-xl bg-blue-50 p-4 border-2 border-blue-200"
+                >
+                  <p className="text-xs text-blue-600 font-semibold mb-1">Development Mode</p>
+                  <p className="text-sm text-blue-900">
+                    Your OTP: <span className="font-mono font-bold text-lg">{displayOtp}</span>
+                  </p>
+                </motion.div>
+              )}
 
-            {/* Forgot Password */}
-            <div className="text-center">
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 rounded-xl bg-red-50 p-4"
+                >
+                  <AlertCircle className="size-5 text-red-600" />
+                  <p className="text-sm font-semibold text-red-700">{error}</p>
+                </motion.div>
+              )}
+
+              {/* Success Message */}
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 rounded-xl bg-green-50 p-4"
+                >
+                  <CheckCircle className="size-5 text-green-600" />
+                  <p className="text-sm font-semibold text-green-700">{success}</p>
+                </motion.div>
+              )}
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={loading}
+                className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-3 font-bold text-white transition hover:shadow-lg disabled:opacity-50"
+              >
+                {loading ? 'Verifying...' : 'Verify OTP'}
+              </motion.button>
+
               <button
                 type="button"
-                disabled
-                className="text-sm font-semibold text-slate-400 cursor-not-allowed"
+                onClick={() => {
+                  setOtpSent(false)
+                  setOtp('')
+                  setError('')
+                  setSuccess('')
+                  setDisplayOtp('')
+                }}
+                className="w-full text-sm font-semibold text-slate-600 hover:text-amber-600 transition"
               >
-                Forgot Password? (Coming Soon)
+                Change Phone Number
               </button>
-            </div>
-          </form>
+            </form>
+          )}
 
           {/* Sign Up Link */}
           <div className="mt-8 border-t border-slate-200 pt-8">

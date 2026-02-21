@@ -14,19 +14,12 @@ function getPrismaClient() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { phone, name, otp, state } = body
+    const { phone, otp } = body
 
     // Validation
-    if (!phone || !name || !otp) {
+    if (!phone || !otp) {
       return NextResponse.json(
-        { error: 'Phone, name, and OTP are required' },
-        { status: 400 }
-      )
-    }
-
-    if (phone.length < 10) {
-      return NextResponse.json(
-        { error: 'Invalid phone number' },
+        { error: 'Phone number and OTP are required' },
         { status: 400 }
       )
     }
@@ -38,7 +31,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify OTP
+    // Check if OTP exists for this phone
     const stored = otpStore.get(phone)
 
     if (!stored) {
@@ -48,6 +41,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check if OTP is expired
     if (otpStore.isExpired(phone)) {
       otpStore.delete(phone)
       return NextResponse.json(
@@ -56,6 +50,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Verify OTP
     if (stored.otp !== otp) {
       return NextResponse.json(
         { error: 'Invalid OTP. Please try again.' },
@@ -66,51 +61,37 @@ export async function POST(request: NextRequest) {
     // OTP is valid - clear it from store
     otpStore.delete(phone)
 
-    const prismaClient = getPrismaClient()
-
-    // Check if phone already exists (double-check)
-    const existingSignup = await prismaClient.billShieldSignup.findUnique({
+    // Get user data
+    const user = await getPrismaClient().billShieldSignup.findUnique({
       where: { phone },
     })
 
-    if (existingSignup) {
+    if (!user) {
       return NextResponse.json(
-        { 
-          error: 'Phone number already registered',
-          alreadySignedUp: true,
-          phone: existingSignup.phone,
-        },
-        { status: 409 }
+        { error: 'User not found' },
+        { status: 404 }
       )
     }
 
-    // Create new signup with ₹500 welcome credits
-    const signup = await prismaClient.billShieldSignup.create({
-      data: {
-        phone,
-        name,
-        state: state || 'Not Specified',
-        credits: 500,
+    // In production, you would:
+    // - Create a session token
+    // - Set secure HTTP-only cookie
+    // - Return user data
+
+    return NextResponse.json({
+      success: true,
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        credits: user.credits.toString(),
       },
     })
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Signup successful',
-        signup: {
-          id: signup.id,
-          phone: signup.phone,
-          credits: signup.credits,
-        },
-      },
-      { status: 201 }
-    )
   } catch (error) {
-    console.error('Signup error:', error)
-    const message = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Verify OTP error:', error)
     return NextResponse.json(
-      { error: `Server error: ${message}` },
+      { error: 'Failed to verify OTP' },
       { status: 500 }
     )
   }

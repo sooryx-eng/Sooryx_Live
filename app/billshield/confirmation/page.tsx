@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle, Gift, Mail, ArrowRight } from 'lucide-react'
+import { CheckCircle, Gift, Phone, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import GlowingHeader from '@/app/components/GlowingHeader'
 
 export default function BillShieldConfirmation() {
   const searchParams = useSearchParams()
-  const email = searchParams.get('email') || ''
+  const phone = searchParams.get('phone') || ''
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -46,18 +46,18 @@ export default function BillShieldConfirmation() {
             Thank you for expressing interest in BillShield. Your spot in our solar capacity pool is reserved.
           </p>
 
-          {/* Email Confirmation */}
-          {email && (
+          {/* Phone Confirmation */}
+          {phone && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.6, duration: 0.5 }}
               className="mb-8 flex items-center gap-3 rounded-xl bg-blue-50 p-4"
             >
-              <Mail className="size-5 text-blue-600" />
+              <Phone className="size-5 text-blue-600" />
               <div>
-                <p className="text-sm text-blue-600 font-semibold">Confirmation sent to</p>
-                <p className="text-blue-900 font-bold">{email}</p>
+                <p className="text-sm text-blue-600 font-semibold">Registered phone number</p>
+                <p className="text-blue-900 font-bold">{phone}</p>
               </div>
             </motion.div>
           )}
@@ -146,17 +146,10 @@ export default function BillShieldConfirmation() {
             initial={{ opacity: 0, y: 10 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 1, duration: 0.5 }}
-            className="flex gap-4"
           >
-            <Link href="/billshield" className="flex-1">
+            <Link href="/billshield" className="w-full block">
               <button className="w-full rounded-xl border-2 border-slate-300 py-3 font-bold text-slate-900 transition hover:border-amber-400 hover:bg-amber-50">
                 Back to BillShield
-              </button>
-            </Link>
-            <Link href="/" className="flex-1">
-              <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-3 font-bold text-white transition hover:shadow-lg">
-                Explore Solar
-                <ArrowRight className="size-4" />
               </button>
             </Link>
           </motion.div>
@@ -169,7 +162,7 @@ export default function BillShieldConfirmation() {
           transition={{ delay: 1.2, duration: 0.5 }}
           className="mt-8 text-center text-sm text-slate-600"
         >
-          We'll send updates to <span className="font-semibold">{email || 'your email'}</span> as we get closer to launch.
+          We'll send updates to <span className="font-semibold">{phone || 'your phone'}</span> as we get closer to launch.
         </motion.p>
       </div>
     </div>

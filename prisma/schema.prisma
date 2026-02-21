@@ -62,9 +62,8 @@ model PasswordResetToken {
 
 model BillShieldSignup {
   id        String   @id @default(cuid())
-  email     String   @unique
+  phone     String   @unique
   name      String
-  phone     String
   state     String?
   credits   Decimal  @default("500")
   status    String   @default("active")
