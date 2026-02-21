@@ -1,0 +1,35 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "env": {
+    "DATABASE_URL": {
+      "description": "PostgreSQL connection string from Vercel Postgres"
+    },
+    "NEXTAUTH_SECRET": {
+      "description": "Random secret for NextAuth (generate with: openssl rand -base64 32)"
+    },
+    "NEXTAUTH_URL": {
+      "description": "Your app URL (e.g., https://sooryx.vercel.app)"
+    },
+    "STRIPE_SECRET_KEY": {
+      "description": "Stripe live secret key"
+    },
+    "STRIPE_WEBHOOK_SECRET": {
+      "description": "Stripe webhook signing secret"
+    },
+    "NEXT_PUBLIC_APP_URL": {
+      "description": "Public app URL for redirects"
+    },
+    "NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED": {
+      "description": "Set to 'true' if using Google OAuth"
+    },
+    "GOOGLE_CLIENT_ID": {
+      "description": "Optional: Google OAuth Client ID"
+    },
+    "GOOGLE_CLIENT_SECRET": {
+      "description": "Optional: Google OAuth Secret"
+    }
+  }
+}
