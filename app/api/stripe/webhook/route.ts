@@ -5,7 +5,7 @@ import Stripe from "stripe";
 export async function POST(req: Request) {
   const signature = req.headers.get('stripe-signature') || '';
   const rawBody = await req.text();
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2022-11-15' });
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { apiVersion: '2023-10-16' });
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
   let event: Stripe.Event;
   try {
