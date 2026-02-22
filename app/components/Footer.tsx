@@ -134,7 +134,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 border-t border-slate-200/70 pt-8 text-center">
           <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} Sooryanarayan Technology LLP. All rights reserved.
+            © 2015 Sooryanarayan Technology LLP. All rights reserved.
           </p>
         </div>
       </div>
