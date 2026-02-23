@@ -14,8 +14,11 @@ export default function ContactUs() {
     serviceType: "residential",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -23,10 +26,45 @@ export default function ContactUs() {
     }));
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // TODO: Handle form submission
+
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+    setSubmitMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Failed to send message.");
+      }
+
+      setSubmitStatus("success");
+      setSubmitMessage("Message sent successfully. We will get back to you shortly.");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        serviceType: "residential",
+        message: "",
+      });
+    } catch (error) {
+      setSubmitStatus("error");
+      setSubmitMessage(
+        error instanceof Error ? error.message : "Something went wrong. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const serviceOptions = [
@@ -226,10 +264,21 @@ export default function ContactUs() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   type="submit"
-                  className="w-full mt-8 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-400 px-6 py-3 text-center font-semibold text-slate-900 shadow-lg hover:shadow-xl transition-all duration-300"
+                  disabled={isSubmitting}
+                  className="w-full mt-8 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-400 px-6 py-3 text-center font-semibold text-slate-900 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Send Message
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </motion.button>
+
+                {submitStatus !== "idle" && (
+                  <p
+                    className={`text-sm text-center mt-3 ${
+                      submitStatus === "success" ? "text-emerald-700" : "text-rose-600"
+                    }`}
+                  >
+                    {submitMessage}
+                  </p>
+                )}
 
                 <p className="text-xs text-slate-500 text-center mt-4">
                   We&apos;ll get back to you within 24 hours
