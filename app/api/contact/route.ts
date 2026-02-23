@@ -39,10 +39,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Please provide a valid email address." }, { status: 400 });
     }
 
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const resendApiKey =
+      process.env.RESEND_API_KEY ||
+      process.env.RESEND_API_KEY_CODE ||
+      process.env.RESEND_KEY;
     if (!resendApiKey) {
       return NextResponse.json(
-        { error: "Email service is not configured." },
+        { error: "Email service is not configured. Add RESEND_API_KEY in environment variables." },
         { status: 500 },
       );
     }
