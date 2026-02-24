@@ -91,6 +91,7 @@ export async function POST(request: NextRequest) {
         message: 'Signup successful',
         signup: {
           id: signup.id,
+          name: signup.name,
           phone: signup.phone,
           credits: signup.credits,
         },

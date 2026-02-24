@@ -181,9 +181,18 @@ export default function BillShieldSignup() {
       }
 
       setSuccess(true)
-      // Redirect to confirmation page with phone
+
+      const userData = {
+        id: data?.signup?.id || '',
+        name: data?.signup?.name || fullName,
+        phone: data?.signup?.phone || phone,
+        credits: data?.signup?.credits ?? 500,
+      }
+      localStorage.setItem('billshieldUser', JSON.stringify(userData))
+
+      // Redirect to user dashboard
       setTimeout(() => {
-        window.location.href = `/billshield/confirmation?phone=${encodeURIComponent(phone)}`
+        window.location.href = '/billshield/user'
       }, 1000)
     } catch (err) {
       setError('Signup failed. Please try again.')
