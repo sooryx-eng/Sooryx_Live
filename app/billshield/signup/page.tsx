@@ -132,8 +132,8 @@ export default function BillShieldSignup() {
         setError('Please enter the OTP')
         return
       }
-      if (otp.length !== 6) {
-        setError('Please enter a valid 6-digit OTP')
+      if (otp.length < 4 || otp.length > 8) {
+        setError('Please enter a valid OTP (4-8 digits)')
         return
       }
 
@@ -357,9 +357,9 @@ export default function BillShieldSignup() {
                   <input
                     type="text"
                     value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    placeholder="000000"
-                    maxLength={6}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                    placeholder="0000"
+                    maxLength={8}
                     disabled={loading}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-center text-2xl font-bold tracking-widest text-slate-900 placeholder-slate-400 transition focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-200 disabled:opacity-50"
                   />
