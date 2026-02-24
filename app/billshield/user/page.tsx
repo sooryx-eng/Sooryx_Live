@@ -13,14 +13,11 @@ type BillShieldUser = {
 }
 
 const USER_STORAGE_KEY = 'billshieldUser'
+const FLOW_STORAGE_KEY = 'billshieldFlow'
 
 export default function BillShieldUserPage() {
   const [user, setUser] = useState<BillShieldUser | null>(null)
-  const [buyAmount, setBuyAmount] = useState(500)
-  const [billAmount, setBillAmount] = useState(0)
-  const [loadingCheckout, setLoadingCheckout] = useState(false)
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
+  const [entryFlow, setEntryFlow] = useState<'signup' | 'signin'>('signin')
 
   useEffect(() => {
     const raw = localStorage.getItem(USER_STORAGE_KEY)
@@ -31,6 +28,11 @@ export default function BillShieldUserPage() {
     try {
       const parsed = JSON.parse(raw) as BillShieldUser
       setUser(parsed)
+
+      const flow = localStorage.getItem(FLOW_STORAGE_KEY)
+      if (flow === 'signup' || flow === 'signin') {
+        setEntryFlow(flow)
+      }
     } catch {
       localStorage.removeItem(USER_STORAGE_KEY)
     }
@@ -47,67 +49,8 @@ export default function BillShieldUserPage() {
 
   const handleSignOut = () => {
     localStorage.removeItem(USER_STORAGE_KEY)
+    localStorage.removeItem(FLOW_STORAGE_KEY)
     window.location.href = '/billshield/login'
-  }
-
-  const handleBuyCredits = async () => {
-    setLoadingCheckout(true)
-    setError('')
-    setMessage('')
-
-    try {
-      const response = await fetch('/api/stripe/create-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ amount: buyAmount }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok || !data.url) {
-        setError('Unable to start checkout right now. Please try again.')
-        return
-      }
-
-      window.location.href = data.url
-    } catch {
-      setError('Unable to start checkout right now. Please try again.')
-    } finally {
-      setLoadingCheckout(false)
-    }
-  }
-
-  const handlePayBill = () => {
-    setError('')
-    setMessage('')
-
-    if (!user) {
-      setError('Please sign in again.')
-      return
-    }
-
-    const amount = Number(billAmount)
-    if (!Number.isFinite(amount) || amount <= 0) {
-      setError('Enter a valid utility bill amount.')
-      return
-    }
-
-    if (amount > walletBalance) {
-      setError('Insufficient wallet balance. Buy credits to continue.')
-      return
-    }
-
-    const updatedUser: BillShieldUser = {
-      ...user,
-      credits: (walletBalance - amount).toFixed(2),
-    }
-
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser))
-    setUser(updatedUser)
-    setBillAmount(0)
-    setMessage('Utility bill paid successfully from your wallet.')
   }
 
   if (!user) {
@@ -149,6 +92,17 @@ export default function BillShieldUserPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 rounded-3xl border border-slate-200/80 bg-white/95 p-6 shadow-xl"
         >
+          <div className="mb-4 rounded-xl bg-gradient-to-r from-amber-50 to-emerald-50 px-4 py-3">
+            <p className="text-lg font-bold text-slate-900">
+              {entryFlow === 'signup' ? 'Account Created!' : 'Welcome to your dashboard'}
+            </p>
+            <p className="text-sm text-slate-600">
+              {entryFlow === 'signup'
+                ? 'Your signup is complete and your BillShield account is ready.'
+                : 'You are signed in successfully.'}
+            </p>
+          </div>
+
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-emerald-100 p-3">
               <Wallet className="size-6 text-emerald-600" />
@@ -167,20 +121,14 @@ export default function BillShieldUserPage() {
               <h2 className="text-xl font-bold text-slate-900">Buy Credits</h2>
             </div>
             <p className="mb-4 text-sm text-slate-600">Add solar credits to your wallet.</p>
-            <input
-              type="number"
-              min={100}
-              step={100}
-              value={buyAmount}
-              onChange={(e) => setBuyAmount(Number(e.target.value) || 0)}
-              className="mb-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200"
-            />
+            <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
+              Coming Soon
+            </div>
             <button
-              onClick={() => void handleBuyCredits()}
-              disabled={loadingCheckout}
+              disabled
               className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-3 font-bold text-white transition hover:shadow-lg disabled:opacity-50"
             >
-              {loadingCheckout ? 'Starting Checkout...' : 'Buy Credits'}
+              Buy Credits (Coming Soon)
             </button>
           </div>
 
@@ -190,26 +138,17 @@ export default function BillShieldUserPage() {
               <h2 className="text-xl font-bold text-slate-900">Pay Utility Bill</h2>
             </div>
             <p className="mb-4 text-sm text-slate-600">Pay your bill directly from wallet balance.</p>
-            <input
-              type="number"
-              min={1}
-              step={1}
-              value={billAmount || ''}
-              onChange={(e) => setBillAmount(Number(e.target.value) || 0)}
-              placeholder="Enter bill amount"
-              className="mb-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-            />
+            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
+              Coming Soon
+            </div>
             <button
-              onClick={handlePayBill}
+              disabled
               className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 py-3 font-bold text-white transition hover:shadow-lg"
             >
-              Pay Bill
+              Pay Utility Bill (Coming Soon)
             </button>
           </div>
         </div>
-
-        {error && <p className="mt-6 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{error}</p>}
-        {message && <p className="mt-6 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">{message}</p>}
       </div>
     </div>
   )

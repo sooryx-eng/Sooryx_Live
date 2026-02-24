@@ -161,6 +161,7 @@ export default function BillShieldLogin() {
 
       if (data?.user) {
         localStorage.setItem('billshieldUser', JSON.stringify(data.user))
+        localStorage.setItem('billshieldFlow', 'signin')
       }
       
       // Redirect to user dashboard

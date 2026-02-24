@@ -189,6 +189,7 @@ export default function BillShieldSignup() {
         credits: data?.signup?.credits ?? 500,
       }
       localStorage.setItem('billshieldUser', JSON.stringify(userData))
+      localStorage.setItem('billshieldFlow', 'signup')
 
       // Redirect to user dashboard
       setTimeout(() => {
@@ -220,7 +221,7 @@ export default function BillShieldSignup() {
             <CheckCircle className="size-10 text-emerald-600" />
           </motion.div>
           <h2 className="mb-3 text-3xl font-bold text-slate-900">Account Created!</h2>
-          <p className="mb-6 text-lg text-slate-600">Redirecting to confirmation...</p>
+          <p className="mb-6 text-lg text-slate-600">Redirecting to your dashboard...</p>
         </motion.div>
       </div>
     )
