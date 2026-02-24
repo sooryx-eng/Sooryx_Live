@@ -124,12 +124,6 @@ export default function BillShieldUserPage() {
             <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
               Coming Soon
             </div>
-            <button
-              disabled
-              className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 py-3 font-bold text-white transition hover:shadow-lg disabled:opacity-50"
-            >
-              Buy Credits (Coming Soon)
-            </button>
           </div>
 
           <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-6 shadow-lg">
@@ -141,12 +135,6 @@ export default function BillShieldUserPage() {
             <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
               Coming Soon
             </div>
-            <button
-              disabled
-              className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 py-3 font-bold text-white transition hover:shadow-lg"
-            >
-              Pay Utility Bill (Coming Soon)
-            </button>
           </div>
         </div>
       </div>
