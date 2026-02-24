@@ -29,7 +29,7 @@ npm run dev
 - `DATABASE_URL`: PostgreSQL connection string.
 - `MSG91_AUTH_KEY`: MSG91 authentication key for sending/verifying OTP.
 - `MSG91_WIDGET_AUTH_KEY` (optional): dedicated auth key for `verifyAccessToken` API.
-- `MSG91_TEMPLATE_ID`: MSG91 OTP template id used by BillShield signup/login.
+- `MSG91_TEMPLATE_ID` (optional): only needed if using server-side send OTP API.
 - `NEXT_PUBLIC_MSG91_WIDGET_ID`: MSG91 widget id for Custom UI SDK methods.
 - `NEXT_PUBLIC_MSG91_TOKEN_AUTH`: MSG91 client token for Custom UI SDK methods.
 - `RESEND_API_KEY`: API key used by `/api/contact` to send emails.
