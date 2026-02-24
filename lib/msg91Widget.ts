@@ -226,11 +226,6 @@ export async function retryOtpWithMsg91(reqId?: string): Promise<Msg91WidgetResu
     return { ok: false, error: 'MSG91 retryOtp method is unavailable.' };
   }
 
-  const captchaVerified = window.isCaptchaVerified?.();
-  if (captchaVerified === false) {
-    return { ok: false, error: 'Captcha is not verified yet. Please complete captcha and try again.' };
-  }
-
   return new Promise((resolve) => {
     let settled = false;
     const timeout = setTimeout(() => {
@@ -272,11 +267,6 @@ export async function verifyOtpWithMsg91(otp: string, reqId?: string): Promise<M
 
   if (typeof window.verifyOtp !== 'function') {
     return { ok: false, error: 'MSG91 verifyOtp method is unavailable.' };
-  }
-
-  const captchaVerified = window.isCaptchaVerified?.();
-  if (captchaVerified === false) {
-    return { ok: false, error: 'Captcha is not verified yet. Please complete captcha and try again.' };
   }
 
   return new Promise((resolve) => {

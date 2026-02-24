@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { User, Phone, Shield, AlertCircle, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import GlowingHeader from '@/app/components/GlowingHeader'
-import { retryOtpWithMsg91, sendOtpWithMsg91, verifyOtpWithMsg91 } from '@/lib/msg91Widget'
+import { initMsg91Widget, retryOtpWithMsg91, sendOtpWithMsg91, verifyOtpWithMsg91 } from '@/lib/msg91Widget'
 
 export default function BillShieldSignup() {
   const [fullName, setFullName] = useState('')
@@ -33,6 +33,17 @@ export default function BillShieldSignup() {
 
     return ''
   }
+
+  useEffect(() => {
+    if (otpSent) {
+      return
+    }
+
+    const normalizedPhone = normalizePhoneForOtp(phone)
+    const identifier = normalizedPhone || ''
+
+    initMsg91Widget(identifier, 'msg91-captcha-signup').catch(() => undefined)
+  }, [otpSent, phone])
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
