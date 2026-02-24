@@ -83,6 +83,15 @@ export default function BillShieldSignup() {
 
       const sendResult = await sendOtpWithMsg91(normalizedPhone)
       if (!sendResult.ok) {
+        const hasWidgetConfig = Boolean(
+          process.env.NEXT_PUBLIC_MSG91_WIDGET_ID && process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH,
+        )
+
+        if (hasWidgetConfig) {
+          setError(sendResult.error || 'Failed to send OTP. Please try again.')
+          return
+        }
+
         const fallbackResponse = await fetch('/api/billshield/send-signup-otp', {
           method: 'POST',
           headers: {
