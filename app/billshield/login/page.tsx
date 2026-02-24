@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Phone, Shield, AlertCircle, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import GlowingHeader from '@/app/components/GlowingHeader'
-import { retryOtpWithMsg91, sendOtpWithMsg91 } from '@/lib/msg91Widget'
+import { retryOtpWithMsg91, sendOtpWithMsg91, verifyOtpWithMsg91 } from '@/lib/msg91Widget'
 
 export default function BillShieldLogin() {
   const [phone, setPhone] = useState('')
@@ -15,6 +15,7 @@ export default function BillShieldLogin() {
   const [loading, setLoading] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   const [reqId, setReqId] = useState('')
+  const [accessToken, setAccessToken] = useState('')
 
   const normalizePhoneForOtp = (value: string) => {
     const digits = value.replace(/\D/g, '')
@@ -114,13 +115,21 @@ export default function BillShieldLogin() {
         return
       }
 
+      let tokenToSend = accessToken
+      const verifyWidgetResult = await verifyOtpWithMsg91(otp, reqId || undefined)
+      if (verifyWidgetResult.ok && verifyWidgetResult.accessToken) {
+        tokenToSend = verifyWidgetResult.accessToken
+        setAccessToken(verifyWidgetResult.accessToken)
+        setReqId(verifyWidgetResult.reqId || reqId)
+      }
+
       // Call API to verify OTP
       const response = await fetch('/api/billshield/verify-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ phone, otp }),
+        body: JSON.stringify({ phone, otp, accessToken: tokenToSend || undefined }),
       })
 
       const data = await response.json()
@@ -315,6 +324,7 @@ export default function BillShieldLogin() {
                   setError('')
                   setSuccess('')
                   setReqId('')
+                  setAccessToken('')
                 }}
                 className="w-full text-sm font-semibold text-slate-600 hover:text-amber-600 transition"
               >

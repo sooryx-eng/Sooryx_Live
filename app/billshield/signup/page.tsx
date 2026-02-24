@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { User, Phone, Shield, AlertCircle, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import GlowingHeader from '@/app/components/GlowingHeader'
-import { retryOtpWithMsg91, sendOtpWithMsg91 } from '@/lib/msg91Widget'
+import { retryOtpWithMsg91, sendOtpWithMsg91, verifyOtpWithMsg91 } from '@/lib/msg91Widget'
 
 export default function BillShieldSignup() {
   const [fullName, setFullName] = useState('')
@@ -18,6 +18,7 @@ export default function BillShieldSignup() {
   const [loading, setLoading] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   const [reqId, setReqId] = useState('')
+  const [accessToken, setAccessToken] = useState('')
 
   const normalizePhoneForOtp = (value: string) => {
     const digits = value.replace(/\D/g, '')
@@ -127,6 +128,14 @@ export default function BillShieldSignup() {
         return
       }
 
+      let tokenToSend = accessToken
+      const verifyWidgetResult = await verifyOtpWithMsg91(otp, reqId || undefined)
+      if (verifyWidgetResult.ok && verifyWidgetResult.accessToken) {
+        tokenToSend = verifyWidgetResult.accessToken
+        setAccessToken(verifyWidgetResult.accessToken)
+        setReqId(verifyWidgetResult.reqId || reqId)
+      }
+
       // Call API to register for early access with OTP verification
       const response = await fetch('/api/billshield/signup', {
         method: 'POST',
@@ -137,6 +146,7 @@ export default function BillShieldSignup() {
           name: fullName,
           phone,
           otp,
+          accessToken: tokenToSend || undefined,
         }),
       })
 
@@ -398,6 +408,7 @@ export default function BillShieldSignup() {
                   setError('')
                   setSuccessMessage('')
                   setReqId('')
+                  setAccessToken('')
                 }}
                 className="w-full text-sm font-semibold text-slate-600 hover:text-amber-600 transition"
               >

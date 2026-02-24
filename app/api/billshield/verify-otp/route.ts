@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { normalizeIndianPhone, verifyMsg91Otp } from '@/lib/msg91'
+import { normalizeIndianPhone, verifyMsg91AccessToken, verifyMsg91Otp } from '@/lib/msg91'
 
 let prisma: PrismaClient | undefined
 
@@ -15,29 +15,40 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const otp = body.otp as string
+    const accessToken = body.accessToken as string | undefined
     const phone = normalizeIndianPhone((body.phone as string) || '')
 
     // Validation
-    if (!phone || !otp) {
+    if (!phone || (!otp && !accessToken)) {
       return NextResponse.json(
-        { error: 'Phone number and OTP are required' },
+        { error: 'Phone number and OTP/access token are required' },
         { status: 400 }
       )
     }
 
-    if (otp.length < 4 || otp.length > 8) {
+    if (otp && (otp.length < 4 || otp.length > 8)) {
       return NextResponse.json(
         { error: 'Invalid OTP format' },
         { status: 400 }
       )
     }
 
-    const verifyResult = await verifyMsg91Otp(phone, otp)
-    if (!verifyResult.ok) {
-      return NextResponse.json(
-        { error: verifyResult.error || 'Invalid OTP. Please try again.' },
-        { status: 400 }
-      )
+    if (accessToken) {
+      const tokenVerifyResult = await verifyMsg91AccessToken(String(accessToken))
+      if (!tokenVerifyResult.ok) {
+        return NextResponse.json(
+          { error: tokenVerifyResult.error || 'OTP verification failed. Please try again.' },
+          { status: 400 }
+        )
+      }
+    } else if (otp) {
+      const verifyResult = await verifyMsg91Otp(phone, otp)
+      if (!verifyResult.ok) {
+        return NextResponse.json(
+          { error: verifyResult.error || 'Invalid OTP. Please try again.' },
+          { status: 400 }
+        )
+      }
     }
 
     // Get user data

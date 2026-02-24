@@ -2,6 +2,7 @@ type Msg91WidgetResult = {
   ok: boolean;
   error?: string;
   reqId?: string;
+  accessToken?: string;
 };
 
 declare global {
@@ -14,6 +15,12 @@ declare global {
     ) => void;
     retryOtp?: (
       channel: string | null,
+      success?: (data: unknown) => void,
+      failure?: (error: unknown) => void,
+      reqId?: string,
+    ) => void;
+    verifyOtp?: (
+      otp: string | number,
       success?: (data: unknown) => void,
       failure?: (error: unknown) => void,
       reqId?: string,
@@ -40,6 +47,43 @@ function extractReqId(payload: unknown): string | undefined {
     const nestedReqId = (nestedData as Record<string, unknown>).reqId;
     if (typeof nestedReqId === 'string' && nestedReqId.length > 0) {
       return nestedReqId;
+    }
+  }
+
+  return undefined;
+}
+
+function extractAccessToken(payload: unknown): string | undefined {
+  if (!payload || typeof payload !== 'object') {
+    return undefined;
+  }
+
+  const data = payload as Record<string, unknown>;
+  const directToken =
+    data.accessToken ||
+    data.access_token ||
+    data.token ||
+    data.jwt_token ||
+    data.jwtToken ||
+    data['access-token'];
+
+  if (typeof directToken === 'string' && directToken.length > 0) {
+    return directToken;
+  }
+
+  const nestedData = data.data;
+  if (nestedData && typeof nestedData === 'object') {
+    const nested = nestedData as Record<string, unknown>;
+    const nestedToken =
+      nested.accessToken ||
+      nested.access_token ||
+      nested.token ||
+      nested.jwt_token ||
+      nested.jwtToken ||
+      nested['access-token'];
+
+    if (typeof nestedToken === 'string' && nestedToken.length > 0) {
+      return nestedToken;
     }
   }
 
@@ -121,6 +165,26 @@ export async function retryOtpWithMsg91(reqId?: string): Promise<Msg91WidgetResu
       null,
       (data) => resolve({ ok: true, reqId: extractReqId(data) ?? reqId }),
       (error) => resolve({ ok: false, error: JSON.stringify(error) }),
+      reqId,
+    );
+  });
+}
+
+export async function verifyOtpWithMsg91(otp: string, reqId?: string): Promise<Msg91WidgetResult> {
+  if (typeof window.verifyOtp !== 'function') {
+    return { ok: false, error: 'MSG91 verifyOtp method is unavailable.' };
+  }
+
+  return new Promise((resolve) => {
+    window.verifyOtp?.(
+      otp,
+      (data) =>
+        resolve({
+          ok: true,
+          reqId: extractReqId(data) ?? reqId,
+          accessToken: extractAccessToken(data),
+        }),
+      (error) => resolve({ ok: false, error: JSON.stringify(error), reqId }),
       reqId,
     );
   });
