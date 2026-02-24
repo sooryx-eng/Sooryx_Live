@@ -158,10 +158,14 @@ export default function BillShieldLogin() {
       }
 
       setSuccess('Login successful!')
+
+      if (data?.user) {
+        localStorage.setItem('billshieldUser', JSON.stringify(data.user))
+      }
       
-      // Redirect to dashboard or BillShield page
+      // Redirect to user dashboard
       setTimeout(() => {
-        window.location.href = '/billshield'
+        window.location.href = '/billshield/user'
       }, 1000)
     } catch (err) {
       setError('Verification failed. Please try again.')
