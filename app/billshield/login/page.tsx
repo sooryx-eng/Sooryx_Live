@@ -236,7 +236,9 @@ export default function BillShieldLogin() {
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Verification
                 </label>
-                <div id="msg91-captcha-login" className="min-h-[78px] rounded-xl border border-slate-200 bg-slate-50 p-2" />
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-2">
+                  <div id="msg91-captcha-login" className="mx-auto min-h-[78px] max-w-[320px] overflow-hidden" />
+                </div>
               </div>
 
               <motion.button

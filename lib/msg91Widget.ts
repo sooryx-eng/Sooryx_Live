@@ -182,10 +182,36 @@ export async function sendOtpWithMsg91(
   }
 
   return new Promise((resolve) => {
+    let settled = false;
+    const timeout = setTimeout(() => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      resolve({
+        ok: false,
+        error: 'MSG91 sendOtp timed out. Please complete captcha and try again.',
+      });
+    }, 15000);
+
     window.sendOtp?.(
       identifier,
-      (data) => resolve({ ok: true, reqId: extractReqId(data) }),
-      (error) => resolve({ ok: false, error: JSON.stringify(error) }),
+      (data) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeout);
+        resolve({ ok: true, reqId: extractReqId(data) });
+      },
+      (error) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeout);
+        resolve({ ok: false, error: JSON.stringify(error) });
+      },
     );
   });
 }
@@ -206,10 +232,33 @@ export async function retryOtpWithMsg91(reqId?: string): Promise<Msg91WidgetResu
   }
 
   return new Promise((resolve) => {
+    let settled = false;
+    const timeout = setTimeout(() => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      resolve({ ok: false, error: 'MSG91 retryOtp timed out. Please try again.', reqId });
+    }, 15000);
+
     window.retryOtp?.(
       null,
-      (data) => resolve({ ok: true, reqId: extractReqId(data) ?? reqId }),
-      (error) => resolve({ ok: false, error: JSON.stringify(error) }),
+      (data) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeout);
+        resolve({ ok: true, reqId: extractReqId(data) ?? reqId });
+      },
+      (error) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeout);
+        resolve({ ok: false, error: JSON.stringify(error), reqId });
+      },
       reqId,
     );
   });
@@ -231,15 +280,37 @@ export async function verifyOtpWithMsg91(otp: string, reqId?: string): Promise<M
   }
 
   return new Promise((resolve) => {
+    let settled = false;
+    const timeout = setTimeout(() => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      resolve({ ok: false, error: 'MSG91 verifyOtp timed out. Please try again.', reqId });
+    }, 15000);
+
     window.verifyOtp?.(
       otp,
-      (data) =>
+      (data) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeout);
         resolve({
           ok: true,
           reqId: extractReqId(data) ?? reqId,
           accessToken: extractAccessToken(data),
-        }),
-      (error) => resolve({ ok: false, error: JSON.stringify(error), reqId }),
+        });
+      },
+      (error) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        clearTimeout(timeout);
+        resolve({ ok: false, error: JSON.stringify(error), reqId });
+      },
       reqId,
     );
   });
