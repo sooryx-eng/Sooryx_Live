@@ -141,6 +141,17 @@ export async function initMsg91Widget(identifier: string, captchaRenderId?: stri
 
   await sdkLoadPromise;
 
+  if (typeof window.sendOtp === 'function' && typeof window.verifyOtp === 'function') {
+    return;
+  }
+
+  if (captchaRenderId) {
+    const container = document.getElementById(captchaRenderId);
+    if (container) {
+      container.innerHTML = '';
+    }
+  }
+
   const configuration = {
     widgetId,
     tokenAuth,
@@ -165,7 +176,9 @@ export async function sendOtpWithMsg91(
   identifier: string,
   captchaRenderId?: string,
 ): Promise<Msg91WidgetResult> {
-  await initMsg91Widget(identifier, captchaRenderId);
+  if (typeof window.sendOtp !== 'function') {
+    await initMsg91Widget(identifier, captchaRenderId);
+  }
 
   const isMethodReady = await waitForMethod(() => window.sendOtp);
   if (!isMethodReady) {

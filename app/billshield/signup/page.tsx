@@ -39,11 +39,8 @@ export default function BillShieldSignup() {
       return
     }
 
-    const normalizedPhone = normalizePhoneForOtp(phone)
-    const identifier = normalizedPhone || ''
-
-    initMsg91Widget(identifier, 'msg91-captcha-signup').catch(() => undefined)
-  }, [otpSent, phone])
+    initMsg91Widget('', 'msg91-captcha-signup').catch(() => undefined)
+  }, [otpSent])
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
