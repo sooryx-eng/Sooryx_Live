@@ -25,6 +25,8 @@ declare global {
       failure?: (error: unknown) => void,
       reqId?: string,
     ) => void;
+    getWidgetData?: () => unknown;
+    isCaptchaVerified?: () => boolean;
     configuration?: Record<string, unknown>;
   }
 }
@@ -125,7 +127,7 @@ function loadScript(src: string) {
   });
 }
 
-export async function initMsg91Widget(identifier: string) {
+export async function initMsg91Widget(identifier: string, captchaRenderId?: string) {
   const widgetId = process.env.NEXT_PUBLIC_MSG91_WIDGET_ID;
   const tokenAuth = process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH;
 
@@ -144,7 +146,9 @@ export async function initMsg91Widget(identifier: string) {
     tokenAuth,
     identifier,
     exposeMethods: true,
-    captchaRenderId: '',
+    captchaRenderId: captchaRenderId || '',
+    success: () => undefined,
+    failure: () => undefined,
   };
 
   window.configuration = configuration;
@@ -157,14 +161,19 @@ export async function initMsg91Widget(identifier: string) {
   throw new Error('MSG91 SDK did not initialize correctly.');
 }
 
-export async function sendOtpWithMsg91(identifier: string): Promise<Msg91WidgetResult> {
-  await initMsg91Widget(identifier);
+export async function sendOtpWithMsg91(
+  identifier: string,
+  captchaRenderId?: string,
+): Promise<Msg91WidgetResult> {
+  await initMsg91Widget(identifier, captchaRenderId);
 
   const isMethodReady = await waitForMethod(() => window.sendOtp);
   if (!isMethodReady) {
+    const widgetData = window.getWidgetData?.();
+    const captchaVerified = window.isCaptchaVerified?.();
     return {
       ok: false,
-      error: 'MSG91 sendOtp method is unavailable. Check widgetId/tokenAuth or SDK initialization.',
+      error: `MSG91 sendOtp method is unavailable. Check widgetId/tokenAuth or SDK initialization. widgetData=${JSON.stringify(widgetData ?? null)} captchaVerified=${String(captchaVerified ?? false)}`,
     };
   }
 
@@ -191,6 +200,11 @@ export async function retryOtpWithMsg91(reqId?: string): Promise<Msg91WidgetResu
     return { ok: false, error: 'MSG91 retryOtp method is unavailable.' };
   }
 
+  const captchaVerified = window.isCaptchaVerified?.();
+  if (captchaVerified === false) {
+    return { ok: false, error: 'Captcha is not verified yet. Please complete captcha and try again.' };
+  }
+
   return new Promise((resolve) => {
     window.retryOtp?.(
       null,
@@ -209,6 +223,11 @@ export async function verifyOtpWithMsg91(otp: string, reqId?: string): Promise<M
 
   if (typeof window.verifyOtp !== 'function') {
     return { ok: false, error: 'MSG91 verifyOtp method is unavailable.' };
+  }
+
+  const captchaVerified = window.isCaptchaVerified?.();
+  if (captchaVerified === false) {
+    return { ok: false, error: 'Captcha is not verified yet. Please complete captcha and try again.' };
   }
 
   return new Promise((resolve) => {

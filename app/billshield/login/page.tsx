@@ -69,7 +69,7 @@ export default function BillShieldLogin() {
         return
       }
 
-      const sendResult = await sendOtpWithMsg91(normalizedPhone)
+      const sendResult = await sendOtpWithMsg91(normalizedPhone, 'msg91-captcha-login')
       if (!sendResult.ok) {
         const hasWidgetConfig = Boolean(
           process.env.NEXT_PUBLIC_MSG91_WIDGET_ID && process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH,
@@ -231,6 +231,13 @@ export default function BillShieldLogin() {
                   <p className="text-sm font-semibold text-green-700">{success}</p>
                 </motion.div>
               )}
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Verification
+                </label>
+                <div id="msg91-captcha-login" className="min-h-[78px] rounded-xl border border-slate-200 bg-slate-50 p-2" />
+              </div>
 
               <motion.button
                 whileHover={{ scale: 1.02 }}

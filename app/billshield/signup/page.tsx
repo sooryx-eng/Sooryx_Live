@@ -81,7 +81,7 @@ export default function BillShieldSignup() {
         return
       }
 
-      const sendResult = await sendOtpWithMsg91(normalizedPhone)
+      const sendResult = await sendOtpWithMsg91(normalizedPhone, 'msg91-captcha-signup')
       if (!sendResult.ok) {
         const hasWidgetConfig = Boolean(
           process.env.NEXT_PUBLIC_MSG91_WIDGET_ID && process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH,
@@ -324,6 +324,13 @@ export default function BillShieldSignup() {
                   <p className="text-sm font-semibold text-green-700">{successMessage}</p>
                 </motion.div>
               )}
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Verification
+                </label>
+                <div id="msg91-captcha-signup" className="min-h-[78px] rounded-xl border border-slate-200 bg-slate-50 p-2" />
+              </div>
 
               {/* Send OTP Button */}
               <motion.button
