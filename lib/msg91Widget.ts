@@ -31,6 +31,24 @@ declare global {
 
 let sdkLoadPromise: Promise<void> | null = null;
 
+async function waitForMethod(
+  getMethod: () => unknown,
+  timeoutMs = 4000,
+  stepMs = 100,
+) {
+  const start = Date.now();
+
+  while (Date.now() - start < timeoutMs) {
+    if (typeof getMethod() === 'function') {
+      return true;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, stepMs));
+  }
+
+  return false;
+}
+
 function extractReqId(payload: unknown): string | undefined {
   if (!payload || typeof payload !== 'object') {
     return undefined;
@@ -142,6 +160,14 @@ export async function initMsg91Widget(identifier: string) {
 export async function sendOtpWithMsg91(identifier: string): Promise<Msg91WidgetResult> {
   await initMsg91Widget(identifier);
 
+  const isMethodReady = await waitForMethod(() => window.sendOtp);
+  if (!isMethodReady) {
+    return {
+      ok: false,
+      error: 'MSG91 sendOtp method is unavailable. Check widgetId/tokenAuth or SDK initialization.',
+    };
+  }
+
   if (typeof window.sendOtp !== 'function') {
     return { ok: false, error: 'MSG91 sendOtp method is unavailable.' };
   }
@@ -156,6 +182,11 @@ export async function sendOtpWithMsg91(identifier: string): Promise<Msg91WidgetR
 }
 
 export async function retryOtpWithMsg91(reqId?: string): Promise<Msg91WidgetResult> {
+  const isMethodReady = await waitForMethod(() => window.retryOtp);
+  if (!isMethodReady) {
+    return { ok: false, error: 'MSG91 retryOtp method is unavailable.' };
+  }
+
   if (typeof window.retryOtp !== 'function') {
     return { ok: false, error: 'MSG91 retryOtp method is unavailable.' };
   }
@@ -171,6 +202,11 @@ export async function retryOtpWithMsg91(reqId?: string): Promise<Msg91WidgetResu
 }
 
 export async function verifyOtpWithMsg91(otp: string, reqId?: string): Promise<Msg91WidgetResult> {
+  const isMethodReady = await waitForMethod(() => window.verifyOtp);
+  if (!isMethodReady) {
+    return { ok: false, error: 'MSG91 verifyOtp method is unavailable.' };
+  }
+
   if (typeof window.verifyOtp !== 'function') {
     return { ok: false, error: 'MSG91 verifyOtp method is unavailable.' };
   }
