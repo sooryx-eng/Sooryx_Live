@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const phoneInput = body.phone as string
+    const validateOnly = Boolean(body.validateOnly)
     const phone = normalizeIndianPhone(phoneInput || '')
 
     // Validation
@@ -42,6 +43,13 @@ export async function POST(request: NextRequest) {
         { error: 'Phone number not registered. Please sign up first.' },
         { status: 404 }
       )
+    }
+
+    if (validateOnly) {
+      return NextResponse.json({
+        success: true,
+        message: 'Phone number validated successfully',
+      })
     }
 
     const sendResult = await sendMsg91Otp(phone)

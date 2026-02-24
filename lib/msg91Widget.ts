@@ -1,0 +1,127 @@
+type Msg91WidgetResult = {
+  ok: boolean;
+  error?: string;
+  reqId?: string;
+};
+
+declare global {
+  interface Window {
+    initSendOTP?: (configuration: Record<string, unknown>) => void;
+    sendOtp?: (
+      identifier: string,
+      success?: (data: unknown) => void,
+      failure?: (error: unknown) => void,
+    ) => void;
+    retryOtp?: (
+      channel: string | null,
+      success?: (data: unknown) => void,
+      failure?: (error: unknown) => void,
+      reqId?: string,
+    ) => void;
+    configuration?: Record<string, unknown>;
+  }
+}
+
+let sdkLoadPromise: Promise<void> | null = null;
+
+function extractReqId(payload: unknown): string | undefined {
+  if (!payload || typeof payload !== 'object') {
+    return undefined;
+  }
+
+  const data = payload as Record<string, unknown>;
+  const directReqId = data.reqId;
+  if (typeof directReqId === 'string' && directReqId.length > 0) {
+    return directReqId;
+  }
+
+  const nestedData = data.data;
+  if (nestedData && typeof nestedData === 'object') {
+    const nestedReqId = (nestedData as Record<string, unknown>).reqId;
+    if (typeof nestedReqId === 'string' && nestedReqId.length > 0) {
+      return nestedReqId;
+    }
+  }
+
+  return undefined;
+}
+
+function loadScript(src: string) {
+  return new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load MSG91 SDK script'));
+    document.body.appendChild(script);
+  });
+}
+
+export async function initMsg91Widget(identifier: string) {
+  const widgetId = process.env.NEXT_PUBLIC_MSG91_WIDGET_ID;
+  const tokenAuth = process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH;
+
+  if (!widgetId || !tokenAuth) {
+    throw new Error('MSG91 widget is not configured. Add NEXT_PUBLIC_MSG91_WIDGET_ID and NEXT_PUBLIC_MSG91_TOKEN_AUTH.');
+  }
+
+  if (!sdkLoadPromise) {
+    sdkLoadPromise = loadScript('https://verify.msg91.com/otp-provider.js');
+  }
+
+  await sdkLoadPromise;
+
+  const configuration = {
+    widgetId,
+    tokenAuth,
+    identifier,
+    exposeMethods: true,
+    captchaRenderId: '',
+  };
+
+  window.configuration = configuration;
+
+  if (typeof window.initSendOTP === 'function') {
+    window.initSendOTP(configuration);
+    return;
+  }
+
+  throw new Error('MSG91 SDK did not initialize correctly.');
+}
+
+export async function sendOtpWithMsg91(identifier: string): Promise<Msg91WidgetResult> {
+  await initMsg91Widget(identifier);
+
+  if (typeof window.sendOtp !== 'function') {
+    return { ok: false, error: 'MSG91 sendOtp method is unavailable.' };
+  }
+
+  return new Promise((resolve) => {
+    window.sendOtp?.(
+      identifier,
+      (data) => resolve({ ok: true, reqId: extractReqId(data) }),
+      (error) => resolve({ ok: false, error: JSON.stringify(error) }),
+    );
+  });
+}
+
+export async function retryOtpWithMsg91(reqId?: string): Promise<Msg91WidgetResult> {
+  if (typeof window.retryOtp !== 'function') {
+    return { ok: false, error: 'MSG91 retryOtp method is unavailable.' };
+  }
+
+  return new Promise((resolve) => {
+    window.retryOtp?.(
+      null,
+      (data) => resolve({ ok: true, reqId: extractReqId(data) ?? reqId }),
+      (error) => resolve({ ok: false, error: JSON.stringify(error) }),
+      reqId,
+    );
+  });
+}

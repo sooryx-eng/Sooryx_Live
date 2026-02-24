@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { User, Phone, Shield, AlertCircle, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import GlowingHeader from '@/app/components/GlowingHeader'
+import { retryOtpWithMsg91, sendOtpWithMsg91 } from '@/lib/msg91Widget'
 
 export default function BillShieldSignup() {
   const [fullName, setFullName] = useState('')
@@ -16,7 +17,21 @@ export default function BillShieldSignup() {
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
-  const [displayOtp, setDisplayOtp] = useState('') // For development
+  const [reqId, setReqId] = useState('')
+
+  const normalizePhoneForOtp = (value: string) => {
+    const digits = value.replace(/\D/g, '')
+
+    if (digits.length === 10) {
+      return `91${digits}`
+    }
+
+    if (digits.length === 12 && digits.startsWith('91')) {
+      return digits
+    }
+
+    return ''
+  }
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,13 +54,19 @@ export default function BillShieldSignup() {
         return
       }
 
-      // Call API to send OTP
+      const normalizedPhone = normalizePhoneForOtp(phone)
+      if (!normalizedPhone) {
+        setError('Please enter a valid Indian phone number')
+        return
+      }
+
+      // Validate via API (duplicate signup check)
       const response = await fetch('/api/billshield/send-signup-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone: normalizedPhone, validateOnly: true }),
       })
 
       const data = await response.json()
@@ -59,13 +80,30 @@ export default function BillShieldSignup() {
         return
       }
 
+      const sendResult = await sendOtpWithMsg91(normalizedPhone)
+      if (!sendResult.ok) {
+        const fallbackResponse = await fetch('/api/billshield/send-signup-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ phone: normalizedPhone }),
+        })
+
+        const fallbackData = await fallbackResponse.json()
+        if (!fallbackResponse.ok) {
+          setError(fallbackData.error || sendResult.error || 'Failed to send OTP. Please try again.')
+          return
+        }
+
+        setReqId('')
+      } else {
+        setReqId(sendResult.reqId || '')
+      }
+
+      setPhone(normalizedPhone)
       setOtpSent(true)
       setSuccessMessage('OTP sent successfully!')
-      
-      // For development - display OTP on screen
-      if (data.otp) {
-        setDisplayOtp(data.otp)
-      }
     } catch (err) {
       setError('Failed to send OTP. Please try again.')
     } finally {
@@ -303,20 +341,6 @@ export default function BillShieldSignup() {
                 </p>
               </div>
 
-              {/* Development OTP Display */}
-              {displayOtp && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="rounded-xl bg-blue-50 p-4 border-2 border-blue-200"
-                >
-                  <p className="text-xs text-blue-600 font-semibold mb-1">Development Mode</p>
-                  <p className="text-sm text-blue-900">
-                    Your OTP: <span className="font-mono font-bold text-lg">{displayOtp}</span>
-                  </p>
-                </motion.div>
-              )}
-
               {/* Error Message */}
               {error && (
                 <motion.div
@@ -342,12 +366,38 @@ export default function BillShieldSignup() {
 
               <button
                 type="button"
+                disabled={loading}
+                onClick={async () => {
+                  setError('')
+                  setSuccessMessage('')
+                  setLoading(true)
+                  try {
+                    const retryResult = await retryOtpWithMsg91(reqId || undefined)
+                    if (!retryResult.ok) {
+                      setError(retryResult.error || 'Failed to resend OTP. Please try again.')
+                      return
+                    }
+                    setReqId(retryResult.reqId || reqId)
+                    setSuccessMessage('OTP resent successfully!')
+                  } catch {
+                    setError('Failed to resend OTP. Please try again.')
+                  } finally {
+                    setLoading(false)
+                  }
+                }}
+                className="w-full text-sm font-semibold text-slate-600 hover:text-amber-600 transition disabled:opacity-50"
+              >
+                Resend OTP
+              </button>
+
+              <button
+                type="button"
                 onClick={() => {
                   setOtpSent(false)
                   setOtp('')
                   setError('')
                   setSuccessMessage('')
-                  setDisplayOtp('')
+                  setReqId('')
                 }}
                 className="w-full text-sm font-semibold text-slate-600 hover:text-amber-600 transition"
               >
