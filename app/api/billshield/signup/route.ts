@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { otpStore } from '@/lib/otpStore'
+import { normalizeIndianPhone, verifyMsg91Otp } from '@/lib/msg91'
 
 let prisma: PrismaClient | undefined
 
@@ -14,7 +14,8 @@ function getPrismaClient() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { phone, name, otp, state } = body
+    const { name, otp, state } = body
+    const phone = normalizeIndianPhone((body.phone as string) || '')
 
     // Validation
     if (!phone || !name || !otp) {
@@ -24,47 +25,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (phone.length < 10) {
+    if (phone.length !== 12) {
       return NextResponse.json(
         { error: 'Invalid phone number' },
         { status: 400 }
       )
     }
 
-    if (otp.length !== 6) {
+    if (otp.length < 4 || otp.length > 8) {
       return NextResponse.json(
         { error: 'Invalid OTP format' },
         { status: 400 }
       )
     }
 
-    // Verify OTP
-    const stored = otpStore.get(phone)
-
-    if (!stored) {
+    const verifyResult = await verifyMsg91Otp(phone, otp)
+    if (!verifyResult.ok) {
       return NextResponse.json(
-        { error: 'Incorrect OTP. Please try again.' },
+        { error: verifyResult.error || 'Invalid OTP. Please try again.' },
         { status: 400 }
       )
     }
-
-    if (otpStore.isExpired(phone)) {
-      otpStore.delete(phone)
-      return NextResponse.json(
-        { error: 'OTP expired. Please request a new one.' },
-        { status: 400 }
-      )
-    }
-
-    if (stored.otp !== otp) {
-      return NextResponse.json(
-        { error: 'Invalid OTP. Please try again.' },
-        { status: 400 }
-      )
-    }
-
-    // OTP is valid - clear it from store
-    otpStore.delete(phone)
 
     const prismaClient = getPrismaClient()
 

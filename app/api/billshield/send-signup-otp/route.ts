@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { otpStore } from '@/lib/otpStore'
+import { normalizeIndianPhone, sendMsg91Otp } from '@/lib/msg91'
 
 let prisma: PrismaClient | undefined
 
@@ -14,7 +14,8 @@ function getPrismaClient() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { phone } = body
+    const phoneInput = body.phone as string
+    const phone = normalizeIndianPhone(phoneInput || '')
 
     // Validation
     if (!phone) {
@@ -24,9 +25,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (phone.length < 10) {
+    if (phone.length !== 12) {
       return NextResponse.json(
-        { error: 'Please enter a valid phone number' },
+        { error: 'Please enter a valid Indian phone number' },
         { status: 400 }
       )
     }
@@ -43,20 +44,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
-
-    // Store OTP with 5-minute expiry
-    otpStore.set(phone, otp, 5)
-
-    // TODO: In production, send OTP via SMS service (Twilio, AWS SNS, etc.)
-    // For development, return OTP in response
-    console.log(`Signup OTP for ${phone}: ${otp}`)
+    const sendResult = await sendMsg91Otp(phone)
+    if (!sendResult.ok) {
+      return NextResponse.json(
+        { error: sendResult.error || 'Failed to send OTP' },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({
       success: true,
       message: 'OTP sent successfully',
-      otp, // Remove this in production
     })
   } catch (error) {
     console.error('Send signup OTP error:', error)

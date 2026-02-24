@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { otpStore } from '@/lib/otpStore'
+import { normalizeIndianPhone, verifyMsg91Otp } from '@/lib/msg91'
 
 let prisma: PrismaClient | undefined
 
@@ -14,7 +14,8 @@ function getPrismaClient() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { phone, otp } = body
+    const otp = body.otp as string
+    const phone = normalizeIndianPhone((body.phone as string) || '')
 
     // Validation
     if (!phone || !otp) {
@@ -24,42 +25,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (otp.length !== 6) {
+    if (otp.length < 4 || otp.length > 8) {
       return NextResponse.json(
         { error: 'Invalid OTP format' },
         { status: 400 }
       )
     }
 
-    // Check if OTP exists for this phone
-    const stored = otpStore.get(phone)
-
-    if (!stored) {
+    const verifyResult = await verifyMsg91Otp(phone, otp)
+    if (!verifyResult.ok) {
       return NextResponse.json(
-        { error: 'Incorrect OTP. Please try again.' },
+        { error: verifyResult.error || 'Invalid OTP. Please try again.' },
         { status: 400 }
       )
     }
-
-    // Check if OTP is expired
-    if (otpStore.isExpired(phone)) {
-      otpStore.delete(phone)
-      return NextResponse.json(
-        { error: 'OTP expired. Please request a new one.' },
-        { status: 400 }
-      )
-    }
-
-    // Verify OTP
-    if (stored.otp !== otp) {
-      return NextResponse.json(
-        { error: 'Invalid OTP. Please try again.' },
-        { status: 400 }
-      )
-    }
-
-    // OTP is valid - clear it from store
-    otpStore.delete(phone)
 
     // Get user data
     const user = await getPrismaClient().billShieldSignup.findUnique({
