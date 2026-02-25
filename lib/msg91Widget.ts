@@ -172,17 +172,10 @@ export async function initMsg91Widget(identifier: string, captchaRenderId?: stri
   // Wait a bit for the SDK to fully initialize
   await new Promise(resolve => setTimeout(resolve, 100));
 
-  // Check if captcha is already verified - if so, don't clear it
-  const isCaptchaAlreadyVerified = typeof window.isCaptchaVerified === 'function' && window.isCaptchaVerified();
-  console.log('MSG91: Captcha already verified:', isCaptchaAlreadyVerified);
-
-  // Clear the captcha container before reinitializing ONLY if captcha is not verified
-  if (captchaRenderId && !isCaptchaAlreadyVerified) {
-    const container = document.getElementById(captchaRenderId);
-    if (container) {
-      console.log('MSG91: Clearing captcha container for fresh init');
-      container.innerHTML = '';
-    }
+  // If methods already exist and we already have a configuration, we're initialized
+  if (typeof window.sendOtp === 'function' && typeof window.verifyOtp === 'function') {
+    console.log('MSG91: Widget already initialized, skipping init');
+    return;
   }
 
   const configuration = {
@@ -198,11 +191,11 @@ export async function initMsg91Widget(identifier: string, captchaRenderId?: stri
   window.configuration = configuration;
 
   if (typeof window.initSendOTP === 'function') {
-    console.log('MSG91: Calling initSendOTP with config:', { widgetId, identifier: identifier || '(empty)', captchaRenderId });
+    console.log('MSG91: Initializing widget with config:', { widgetId, identifier: identifier || '(empty)', captchaRenderId });
     window.initSendOTP(configuration);
     
-    // Wait for the captcha to actually render (only on first init)
-    if (captchaRenderId && !isCaptchaAlreadyVerified) {
+    // Wait for the widget to render
+    if (captchaRenderId) {
       await new Promise(resolve => setTimeout(resolve, 300));
     }
     
@@ -216,64 +209,18 @@ export async function sendOtpWithMsg91(
   identifier: string,
   captchaRenderId?: string,
 ): Promise<Msg91WidgetResult> {
-  // Always reinitialize with the actual identifier before sending OTP
-  // This ensures the widget has the correct phone number
-  console.log('MSG91: Reinitializing widget with identifier before sending OTP');
-  await initMsg91Widget(identifier, captchaRenderId);
-
-  // Wait a moment for the widget to fully update after reinitialization
-  await new Promise(resolve => setTimeout(resolve, 200));
-
+  // Ensure methods are ready
   const isMethodReady = await waitForMethod(() => window.sendOtp);
   if (!isMethodReady) {
     const widgetData = window.getWidgetData?.();
-    const captchaVerified = window.isCaptchaVerified?.();
     return {
       ok: false,
-      error: `MSG91 sendOtp method is unavailable. Check widgetId/tokenAuth or SDK initialization. widgetData=${JSON.stringify(widgetData ?? null)} captchaVerified=${String(captchaVerified ?? false)}`,
+      error: `MSG91 sendOtp method is unavailable. Widget may not be initialized.`,
     };
   }
 
   if (typeof window.sendOtp !== 'function') {
     return { ok: false, error: 'MSG91 sendOtp method is unavailable.' };
-  }
-
-  // Wait for captcha to be verified with retry logic
-  const captchaReadyPromise = new Promise<boolean>((resolve) => {
-    let attempts = 0;
-    const maxAttempts = 10;
-    const checkInterval = setInterval(() => {
-      attempts++;
-      const isCaptchaVerified = typeof window.isCaptchaVerified === 'function' 
-        ? window.isCaptchaVerified() 
-        : false;
-      
-      console.log(`MSG91: Captcha check attempt ${attempts}/${maxAttempts}, verified: ${isCaptchaVerified}`);
-      
-      if (isCaptchaVerified) {
-        clearInterval(checkInterval);
-        resolve(true);
-      } else if (attempts >= maxAttempts) {
-        clearInterval(checkInterval);
-        resolve(false);
-      }
-    }, 100);
-
-    // Also resolve if captcha is verified on first check
-    if (typeof window.isCaptchaVerified === 'function' && window.isCaptchaVerified()) {
-      clearInterval(checkInterval);
-      resolve(true);
-    }
-  });
-
-  const isCaptchaVerified = await captchaReadyPromise;
-  console.log('MSG91: Final captcha verification status:', isCaptchaVerified);
-  
-  if (!isCaptchaVerified) {
-    return {
-      ok: false,
-      error: 'Please complete the captcha verification before sending OTP.',
-    };
   }
 
   console.log('MSG91: Calling sendOtp with identifier:', identifier);
@@ -285,11 +232,10 @@ export async function sendOtpWithMsg91(
         return;
       }
       settled = true;
-      const captchaStatus = window.isCaptchaVerified?.() ? 'verified' : 'not verified';
-      console.error('MSG91: sendOtp timed out. Captcha status:', captchaStatus);
+      console.error('MSG91: sendOtp timed out after 15 seconds');
       resolve({
         ok: false,
-        error: `MSG91 sendOtp timed out (captcha: ${captchaStatus}). Please try again.`,
+        error: 'OTP request timed out. Please check your captcha and try again.',
       });
     }, 15000);
 
