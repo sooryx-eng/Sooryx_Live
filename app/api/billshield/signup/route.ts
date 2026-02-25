@@ -17,8 +17,14 @@ export async function POST(request: NextRequest) {
     const { name, otp, state, accessToken } = body
     const phone = normalizeIndianPhone((body.phone as string) || '')
 
+    console.log('=== SIGNUP API ===')
+    console.log('Raw phone from request:', body.phone)
+    console.log('Normalized phone:', phone)
+    console.log('Phone length:', phone.length)
+
     // Validation
     if (!phone || !name || (!otp && !accessToken)) {
+      console.log('Signup validation failed - missing required fields')
       return NextResponse.json(
         { error: 'Phone, name, and OTP/access token are required' },
         { status: 400 }
@@ -26,6 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (phone.length !== 12) {
+      console.log('Signup validation failed - invalid phone length:', phone.length)
       return NextResponse.json(
         { error: 'Invalid phone number' },
         { status: 400 }
@@ -42,6 +49,7 @@ export async function POST(request: NextRequest) {
     if (accessToken) {
       const tokenVerifyResult = await verifyMsg91AccessToken(String(accessToken))
       if (!tokenVerifyResult.ok) {
+        console.log('Access token verification failed')
         return NextResponse.json(
           { error: tokenVerifyResult.error || 'OTP verification failed. Please try again.' },
           { status: 400 }
@@ -50,6 +58,7 @@ export async function POST(request: NextRequest) {
     } else if (otp) {
       const verifyResult = await verifyMsg91Otp(phone, otp)
       if (!verifyResult.ok) {
+        console.log('OTP verification failed:', verifyResult.error)
         return NextResponse.json(
           { error: verifyResult.error || 'Invalid OTP. Please try again.' },
           { status: 400 }
@@ -65,6 +74,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingSignup) {
+      console.log('User already exists for phone:', phone)
       return NextResponse.json(
         { 
           error: 'Phone number already registered',
@@ -76,6 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new signup with ₹500 welcome credits
+    console.log('Creating new user with phone:', phone, 'name:', name)
     const signup = await prismaClient.billShieldSignup.create({
       data: {
         phone,
@@ -84,6 +95,8 @@ export async function POST(request: NextRequest) {
         credits: 500,
       },
     })
+
+    console.log('User created successfully. ID:', signup.id, 'Phone:', signup.phone)
 
     return NextResponse.json(
       {

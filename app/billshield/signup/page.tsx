@@ -165,6 +165,12 @@ export default function BillShieldSignup() {
         setReqId(verifyWidgetResult.reqId || reqId)
       }
 
+      console.log('=== SIGNUP VERIFY OTP ===')
+      console.log('Phone on client:', phone)
+      console.log('Full name:', fullName)
+      console.log('OTP entered:', otp)
+      console.log('Sending to signup API')
+
       // Call API to register for early access with OTP verification
       const response = await fetch('/api/billshield/signup', {
         method: 'POST',
@@ -180,6 +186,8 @@ export default function BillShieldSignup() {
       })
 
       const data = await response.json()
+
+      console.log('Signup API response:', data)
 
       if (!response.ok) {
         if (data.alreadySignedUp) {

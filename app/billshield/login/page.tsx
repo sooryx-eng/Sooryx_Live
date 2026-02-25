@@ -152,6 +152,11 @@ export default function BillShieldLogin() {
         setReqId(verifyWidgetResult.reqId || reqId)
       }
 
+      console.log('=== LOGIN VERIFY OTP ===')
+      console.log('Phone on client:', phone)
+      console.log('Phone length:', phone.length)
+      console.log('Sending to verify-otp API with phone:', phone)
+
       // Call API to verify OTP
       const response = await fetch('/api/billshield/verify-otp', {
         method: 'POST',
@@ -164,11 +169,13 @@ export default function BillShieldLogin() {
       const data = await response.json()
 
       if (!response.ok) {
+        console.log('Verify OTP failed:', data.error)
         setError(data.error || 'Invalid OTP. Please try again.')
         setOtp('')
         return
       }
 
+      console.log('Verify OTP successful, user data:', data?.user)
       setSuccess('Login successful!')
 
       if (data?.user) {
@@ -181,6 +188,7 @@ export default function BillShieldLogin() {
         window.location.href = '/billshield/user'
       }, 1000)
     } catch (err) {
+      console.error('Verification error:', err)
       setError('Verification failed. Please try again.')
       setOtp('')
     } finally {
