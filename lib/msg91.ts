@@ -79,23 +79,34 @@ export async function verifyMsg91Otp(phone: string, otp: string): Promise<Msg91R
   url.searchParams.set("mobile", phone);
   url.searchParams.set("otp", otp);
 
-  const response = await fetch(url.toString(), {
-    method: "POST",
-    headers: {
-      authkey: authKey,
-      "Content-Type": "application/json",
-    },
-  });
+  try {
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      headers: {
+        authkey: authKey,
+        "Content-Type": "application/json",
+      },
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
+    const data = await response.json();
+    
+    // MSG91 API returns success/error in the response body, not just HTTP status
+    if (data.type === "success") {
+      return { ok: true };
+    }
+
+    // OTP verification failed
     return {
       ok: false,
-      error: `Invalid or expired OTP. ${errorText}`,
+      error: data.message || `Invalid or expired OTP. ${data.type}`,
+    };
+  } catch (error) {
+    console.error("MSG91 OTP verification error:", error);
+    return {
+      ok: false,
+      error: `Failed to verify OTP: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
-
-  return { ok: true };
 }
 
 export async function verifyMsg91AccessToken(accessToken: string): Promise<Msg91Result> {
@@ -108,24 +119,34 @@ export async function verifyMsg91AccessToken(accessToken: string): Promise<Msg91
     };
   }
 
-  const response = await fetch("https://control.msg91.com/api/v5/widget/verifyAccessToken", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      authkey: authKey,
-      "access-token": accessToken,
-    }),
-  });
+  try {
+    const response = await fetch("https://control.msg91.com/api/v5/widget/verifyAccessToken", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        authkey: authKey,
+        "access-token": accessToken,
+      }),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
+    const data = await response.json();
+    
+    // Check if the response indicates success
+    if (data.type === "success" || (data.success !== undefined && data.success)) {
+      return { ok: true };
+    }
+
     return {
       ok: false,
-      error: `MSG91 access-token verification failed. ${errorText}`,
+      error: data.message || `Access token verification failed. ${data.type}`,
+    };
+  } catch (error) {
+    console.error("MSG91 access token verification error:", error);
+    return {
+      ok: false,
+      error: `Failed to verify access token: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
-
-  return { ok: true };
 }
