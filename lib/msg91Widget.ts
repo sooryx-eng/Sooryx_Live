@@ -228,6 +228,17 @@ export async function sendOtpWithMsg91(
     return { ok: false, error: 'MSG91 sendOtp method is unavailable.' };
   }
 
+  // Check if captcha is verified before attempting to send OTP
+  if (typeof window.isCaptchaVerified === 'function') {
+    const isCaptchaVerified = window.isCaptchaVerified();
+    if (!isCaptchaVerified) {
+      return {
+        ok: false,
+        error: 'Please complete the captcha verification before sending OTP.',
+      };
+    }
+  }
+
   return new Promise((resolve) => {
     let settled = false;
     const timeout = setTimeout(() => {
@@ -235,9 +246,10 @@ export async function sendOtpWithMsg91(
         return;
       }
       settled = true;
+      const captchaStatus = window.isCaptchaVerified?.() ? 'verified' : 'not verified';
       resolve({
         ok: false,
-        error: 'MSG91 sendOtp timed out. Please complete captcha and try again.',
+        error: `MSG91 sendOtp timed out (captcha: ${captchaStatus}). Please try again.`,
       });
     }, 15000);
 
