@@ -18,8 +18,12 @@ export async function POST(request: NextRequest) {
     const accessToken = body.accessToken as string | undefined
     const phone = normalizeIndianPhone((body.phone as string) || '')
 
+    console.log('Verify OTP - Phone before normalization:', body.phone)
+    console.log('Verify OTP - Phone after normalization:', phone)
+
     // Validation
     if (!phone || (!otp && !accessToken)) {
+      console.log('Verify OTP - Missing phone or otp/accessToken')
       return NextResponse.json(
         { error: 'Phone number and OTP/access token are required' },
         { status: 400 }
@@ -52,11 +56,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user data
+    console.log('Verify OTP - Looking up user with phone:', phone)
     const user = await getPrismaClient().billShieldSignup.findUnique({
       where: { phone },
     })
 
+    console.log('Verify OTP - User lookup result:', user ? 'Found' : 'Not found')
+
     if (!user) {
+      console.error('Verify OTP - User not found for phone:', phone)
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }

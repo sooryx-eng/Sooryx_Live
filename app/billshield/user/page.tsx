@@ -20,7 +20,7 @@ export default function BillShieldUserPage() {
   const [entryFlow, setEntryFlow] = useState<'signup' | 'signin'>('signin')
 
   useEffect(() => {
-    const raw = localStorage.getItem(USER_STORAGE_KEY)
+    const raw = sessionStorage.getItem(USER_STORAGE_KEY)
     if (!raw) {
       return
     }
@@ -29,12 +29,12 @@ export default function BillShieldUserPage() {
       const parsed = JSON.parse(raw) as BillShieldUser
       setUser(parsed)
 
-      const flow = localStorage.getItem(FLOW_STORAGE_KEY)
+      const flow = sessionStorage.getItem(FLOW_STORAGE_KEY)
       if (flow === 'signup' || flow === 'signin') {
         setEntryFlow(flow)
       }
     } catch {
-      localStorage.removeItem(USER_STORAGE_KEY)
+      sessionStorage.removeItem(USER_STORAGE_KEY)
     }
   }, [])
 
@@ -48,8 +48,8 @@ export default function BillShieldUserPage() {
   }, [user])
 
   const handleSignOut = () => {
-    localStorage.removeItem(USER_STORAGE_KEY)
-    localStorage.removeItem(FLOW_STORAGE_KEY)
+    sessionStorage.removeItem(USER_STORAGE_KEY)
+    sessionStorage.removeItem(FLOW_STORAGE_KEY)
     window.location.href = '/billshield/login'
   }
 

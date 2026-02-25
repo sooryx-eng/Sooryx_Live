@@ -200,8 +200,8 @@ export default function BillShieldSignup() {
         phone: data?.signup?.phone || phone,
         credits: data?.signup?.credits ?? 500,
       }
-      localStorage.setItem('billshieldUser', JSON.stringify(userData))
-      localStorage.setItem('billshieldFlow', 'signup')
+      sessionStorage.setItem('billshieldUser', JSON.stringify(userData))
+      sessionStorage.setItem('billshieldFlow', 'signup')
 
       // Redirect to user dashboard
       setTimeout(() => {
@@ -451,12 +451,14 @@ export default function BillShieldSignup() {
               <button
                 type="button"
                 onClick={() => {
+                  setPhone('')
                   setOtpSent(false)
                   setOtp('')
                   setError('')
                   setSuccessMessage('')
                   setReqId('')
                   setAccessToken('')
+                  setCaptchaInitialized(false)
                 }}
                 className="w-full text-sm font-semibold text-slate-600 hover:text-amber-600 transition"
               >

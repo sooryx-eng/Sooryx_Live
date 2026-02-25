@@ -172,8 +172,8 @@ export default function BillShieldLogin() {
       setSuccess('Login successful!')
 
       if (data?.user) {
-        localStorage.setItem('billshieldUser', JSON.stringify(data.user))
-        localStorage.setItem('billshieldFlow', 'signin')
+        sessionStorage.setItem('billshieldUser', JSON.stringify(data.user))
+        sessionStorage.setItem('billshieldFlow', 'signin')
       }
       
       // Redirect to user dashboard
@@ -362,12 +362,14 @@ export default function BillShieldLogin() {
               <button
                 type="button"
                 onClick={() => {
+                  setPhone('')
                   setOtpSent(false)
                   setOtp('')
                   setError('')
                   setSuccess('')
                   setReqId('')
                   setAccessToken('')
+                  setCaptchaInitialized(false)
                 }}
                 className="w-full text-sm font-semibold text-slate-600 hover:text-amber-600 transition"
               >
