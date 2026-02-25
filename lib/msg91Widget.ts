@@ -172,11 +172,6 @@ export async function initMsg91Widget(identifier: string, captchaRenderId?: stri
   // Wait a bit for the SDK to fully initialize
   await new Promise(resolve => setTimeout(resolve, 100));
 
-  // If methods already exist, we're done
-  if (typeof window.sendOtp === 'function' && typeof window.verifyOtp === 'function') {
-    return;
-  }
-
   // Clear the captcha container before reinitializing
   if (captchaRenderId) {
     const container = document.getElementById(captchaRenderId);
