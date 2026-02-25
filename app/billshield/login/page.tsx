@@ -16,6 +16,7 @@ export default function BillShieldLogin() {
   const [otpSent, setOtpSent] = useState(false)
   const [reqId, setReqId] = useState('')
   const [accessToken, setAccessToken] = useState('')
+  const [captchaInitialized, setCaptchaInitialized] = useState(false)
 
   const normalizePhoneForOtp = (value: string) => {
     const digits = value.replace(/\D/g, '')
@@ -32,12 +33,23 @@ export default function BillShieldLogin() {
   }
 
   useEffect(() => {
-    if (otpSent) {
+    if (otpSent || captchaInitialized) {
       return
     }
 
-    initMsg91Widget('', 'msg91-captcha-login').catch(() => undefined)
-  }, [otpSent])
+    // Add a small delay to ensure DOM is ready after React hydration
+    const timer = setTimeout(() => {
+      initMsg91Widget('', 'msg91-captcha-login')
+        .then(() => {
+          setCaptchaInitialized(true)
+        })
+        .catch((err) => {
+          console.error('MSG91 widget init failed:', err)
+        })
+    }, 250)
+
+    return () => clearTimeout(timer)
+  }, [otpSent, captchaInitialized])
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()

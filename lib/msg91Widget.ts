@@ -127,7 +127,21 @@ function loadScript(src: string) {
   });
 }
 
-export async function initMsg91Widget(identifier: string, captchaRenderId?: string) {
+async function waitForDomElement(elementId: string, timeoutMs = 2000, stepMs = 50): Promise<boolean> {
+  const start = Date.now();
+  
+  while (Date.now() - start < timeoutMs) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, stepMs));
+  }
+  
+  return false;
+}
+
+export async function initMsg91Widget(identifier: string, captchaRenderId?: string, retryCount = 0) {
   const widgetId = process.env.NEXT_PUBLIC_MSG91_WIDGET_ID;
   const tokenAuth = process.env.NEXT_PUBLIC_MSG91_TOKEN_AUTH;
 
@@ -135,16 +149,35 @@ export async function initMsg91Widget(identifier: string, captchaRenderId?: stri
     throw new Error('MSG91 widget is not configured. Add NEXT_PUBLIC_MSG91_WIDGET_ID and NEXT_PUBLIC_MSG91_TOKEN_AUTH.');
   }
 
+  // If captchaRenderId is provided, wait for the DOM element to exist
+  if (captchaRenderId) {
+    const elementExists = await waitForDomElement(captchaRenderId);
+    if (!elementExists) {
+      console.warn(`MSG91: Captcha container '${captchaRenderId}' not found in DOM`);
+      if (retryCount < 3) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return initMsg91Widget(identifier, captchaRenderId, retryCount + 1);
+      }
+      throw new Error(`MSG91: Captcha container '${captchaRenderId}' not found after retries`);
+    }
+  }
+
+  // Load the SDK script
   if (!sdkLoadPromise) {
     sdkLoadPromise = loadScript('https://verify.msg91.com/otp-provider.js');
   }
 
   await sdkLoadPromise;
 
+  // Wait a bit for the SDK to fully initialize
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // If methods already exist, we're done
   if (typeof window.sendOtp === 'function' && typeof window.verifyOtp === 'function') {
     return;
   }
 
+  // Clear the captcha container before reinitializing
   if (captchaRenderId) {
     const container = document.getElementById(captchaRenderId);
     if (container) {
@@ -166,6 +199,12 @@ export async function initMsg91Widget(identifier: string, captchaRenderId?: stri
 
   if (typeof window.initSendOTP === 'function') {
     window.initSendOTP(configuration);
+    
+    // Wait for the captcha to actually render
+    if (captchaRenderId) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
     return;
   }
 
