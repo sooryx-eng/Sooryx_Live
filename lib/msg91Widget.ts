@@ -221,6 +221,9 @@ export async function sendOtpWithMsg91(
   console.log('MSG91: Reinitializing widget with identifier before sending OTP');
   await initMsg91Widget(identifier, captchaRenderId);
 
+  // Wait a moment for the widget to fully update after reinitialization
+  await new Promise(resolve => setTimeout(resolve, 200));
+
   const isMethodReady = await waitForMethod(() => window.sendOtp);
   if (!isMethodReady) {
     const widgetData = window.getWidgetData?.();
@@ -235,16 +238,42 @@ export async function sendOtpWithMsg91(
     return { ok: false, error: 'MSG91 sendOtp method is unavailable.' };
   }
 
-  // Check if captcha is verified before attempting to send OTP
-  if (typeof window.isCaptchaVerified === 'function') {
-    const isCaptchaVerified = window.isCaptchaVerified();
-    console.log('MSG91: Captcha verification status:', isCaptchaVerified);
-    if (!isCaptchaVerified) {
-      return {
-        ok: false,
-        error: 'Please complete the captcha verification before sending OTP.',
-      };
+  // Wait for captcha to be verified with retry logic
+  const captchaReadyPromise = new Promise<boolean>((resolve) => {
+    let attempts = 0;
+    const maxAttempts = 10;
+    const checkInterval = setInterval(() => {
+      attempts++;
+      const isCaptchaVerified = typeof window.isCaptchaVerified === 'function' 
+        ? window.isCaptchaVerified() 
+        : false;
+      
+      console.log(`MSG91: Captcha check attempt ${attempts}/${maxAttempts}, verified: ${isCaptchaVerified}`);
+      
+      if (isCaptchaVerified) {
+        clearInterval(checkInterval);
+        resolve(true);
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkInterval);
+        resolve(false);
+      }
+    }, 100);
+
+    // Also resolve if captcha is verified on first check
+    if (typeof window.isCaptchaVerified === 'function' && window.isCaptchaVerified()) {
+      clearInterval(checkInterval);
+      resolve(true);
     }
+  });
+
+  const isCaptchaVerified = await captchaReadyPromise;
+  console.log('MSG91: Final captcha verification status:', isCaptchaVerified);
+  
+  if (!isCaptchaVerified) {
+    return {
+      ok: false,
+      error: 'Please complete the captcha verification before sending OTP.',
+    };
   }
 
   console.log('MSG91: Calling sendOtp with identifier:', identifier);
