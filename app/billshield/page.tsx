@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Zap, TrendingUp, CheckCircle2, Gift, Star, ArrowRight, Layers } from "lucide-react";
-import Link from "next/link";
 import GlowingHeader from "../components/GlowingHeader";
 import SolarLineArt3 from "../components/SolarLineArt3";
 
@@ -62,18 +61,6 @@ export default function BillShield() {
         <p className="text-white/90 text-sm md:text-base font-semibold mt-1">
           We're pooling solar capacity. Limited allocation. Early access opens soon.
         </p>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="mt-3"
-        >
-          <Link href="/billshield/signup">
-            <button className="rounded-full bg-white px-6 py-2 font-bold text-amber-600 transition hover:bg-slate-100">
-              Express Interest
-            </button>
-          </Link>
-        </motion.div>
       </motion.div>
 
       {/* Hero Section */}
@@ -129,14 +116,6 @@ export default function BillShield() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-            className="mt-8 inline-block rounded-full border-2 border-amber-400 bg-gradient-to-r from-amber-50 to-yellow-50 px-6 py-3 text-sm font-bold text-amber-700 shadow-lg"
-          >
-            🎁 Get ₹500 Solar Credits When You Sign Up
-          </motion.div>
         </motion.div>
       </section>
 
@@ -364,26 +343,8 @@ export default function BillShield() {
                 </div>
               </motion.div>
 
-              <div className="flex gap-3">
-                <Link href="/billshield/login" className="flex-1">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-slate-300 px-8 py-4 text-lg font-bold text-slate-900 transition hover:border-amber-400 hover:bg-amber-50"
-                  >
-                    Sign In
-                  </motion.button>
-                </Link>
-                <Link href="/billshield/signup" className="flex-1">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 px-8 py-4 text-lg font-bold text-white shadow-xl transition hover:shadow-2xl"
-                  >
-                    Buy Now
-                    <ArrowRight className="size-5" />
-                  </motion.button>
-                </Link>
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-4 text-center text-sm font-semibold text-amber-700">
+                BillShield wallet, credits, and checkout are coming soon.
               </div>
             </div>
           </div>
@@ -444,10 +405,6 @@ export default function BillShield() {
 
         <div className="space-y-4">
           <FAQCard
-            question="Do I really get ₹500 for free?"
-            answer="Yes! When you express interest in BillShield today, you'll receive ₹500 worth of solar-generated electricity credits instantly when the service launches. No strings attached."
-          />
-          <FAQCard
             question="How do I use my credits?"
             answer="Credits are stored in your BillShield wallet. When paying your electricity bill, you can apply available credits to reduce the amount due. It's that simple."
           />
@@ -470,35 +427,6 @@ export default function BillShield() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="mx-auto max-w-7xl px-6 py-16 md:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 text-center shadow-2xl md:p-16"
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(251,191,36,0.2),transparent_50%)]" />
-          <div className="relative z-10">
-            <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
-              Ready to Save on Your Bills?
-            </h2>
-            <p className="mx-auto mb-8 max-w-2xl text-lg text-slate-300">
-              Get instant discounts on energy credits. No commitment. Just savings.
-            </p>
-            <Link href="/billshield/signup">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-amber-400 via-yellow-400 to-emerald-400 px-8 py-4 text-lg font-bold text-slate-900 shadow-xl transition hover:shadow-2xl"
-              >
-                Get Started with BillShield
-                <ArrowRight className="size-5" />
-              </motion.button>
-            </Link>
-          </div>
-        </motion.div>
-      </section>
     </div>
   );
 }
