@@ -26,7 +26,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/platform" className="text-sm text-slate-600 transition hover:text-amber-600">
+                <Link href="/" className="text-sm text-slate-600 transition hover:text-amber-600">
                   Home
                 </Link>
               </li>

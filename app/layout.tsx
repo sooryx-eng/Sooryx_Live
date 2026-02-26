@@ -57,7 +57,7 @@ export default function RootLayout({
             >
               BillShield
             </Link>
-            <Link href="/platform" style={{ cursor: "pointer" }}>Home</Link>
+            <Link href="/" style={{ cursor: "pointer" }}>Home</Link>
             <Link href="/calculator" style={{ cursor: "pointer" }}>Calculate Savings</Link>
             <Link href="/how-it-works" style={{ cursor: "pointer" }}>How it Works</Link>
             <Link href="/contact" style={{ cursor: "pointer" }}>Contact Us</Link>
