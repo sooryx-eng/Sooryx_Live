@@ -1,21 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <defs>
-    <linearGradient id="sooryxGradient" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#f59e0b"/>
-      <stop offset="0.5" stop-color="#facc15"/>
-      <stop offset="1" stop-color="#10b981"/>
+    <linearGradient id="panelGlow" x1="14" y1="16" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="sunGlow" x1="42" y1="8" x2="58" y2="24" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#facc15"/>
+      <stop offset="1" stop-color="#f59e0b"/>
     </linearGradient>
   </defs>
 
-  <circle cx="32" cy="32" r="24" stroke="url(#sooryxGradient)" stroke-width="3.5"/>
+  <rect x="14" y="18" width="36" height="28" rx="4" fill="url(#panelGlow)" stroke="#e2e8f0" stroke-width="2"/>
+  <path d="M23 18V46M32 18V46M41 18V46" stroke="#bae6fd" stroke-width="1.5"/>
+  <path d="M14 25H50M14 32H50M14 39H50" stroke="#bae6fd" stroke-width="1.5"/>
 
-  <path
-    d="M22 22C25.2 16.8 36.8 16.8 40 22C43.2 27.2 32 28.2 29 32C26 35.8 20.8 40.8 24 46C27.2 51.2 38.8 51.2 42 46"
-    stroke="url(#sooryxGradient)"
-    stroke-width="4"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
+  <path d="M20 49H44" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M26 46L23 52" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M38 46L41 52" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
 
-  <circle cx="32" cy="32" r="3" fill="url(#sooryxGradient)"/>
+  <circle cx="49" cy="15" r="7" fill="url(#sunGlow)"/>
+  <path d="M49 4V1M49 29V26M60 15H63M35 15H38M57 7L59 5M39 25L41 23M57 23L59 25M39 7L41 9" stroke="#f59e0b" stroke-width="1.6" stroke-linecap="round"/>
 </svg>
