@@ -52,7 +52,7 @@ export default function RootLayout({
           </div>
 
           <div className="border-t border-white/10 px-4 py-2 md:hidden">
-            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none">
+            <div className="flex flex-wrap items-center gap-2">
               <Link
                 href="/billshield"
                 style={{
@@ -72,10 +72,10 @@ export default function RootLayout({
               >
                 BillShield
               </Link>
-              <Link href="/" className="px-2 text-sm">Home</Link>
-              <Link href="/calculator" className="px-2 text-sm">Calculate Savings</Link>
-              <Link href="/how-it-works" className="px-2 text-sm">How it Works</Link>
-              <Link href="/contact" className="px-2 text-sm">Contact Us</Link>
+              <Link href="/" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">Home</Link>
+              <Link href="/calculator" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">Calculate Savings</Link>
+              <Link href="/how-it-works" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">How it Works</Link>
+              <Link href="/contact" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">Contact Us</Link>
             </div>
           </div>
         </nav>
