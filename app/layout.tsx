@@ -23,7 +23,12 @@ export default function RootLayout({
         {/* GLOBAL NAVBAR */}
         <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-4 lg:px-10 lg:py-5">
-            <div className="shrink-0 text-lg font-semibold md:text-[22px]">Sooryx</div>
+            <Link
+              href="/"
+              className="shrink-0 rounded-full px-2 py-1 text-lg font-semibold text-white transition duration-300 hover:bg-white/5 hover:text-amber-300 md:text-[22px]"
+            >
+              Sooryx
+            </Link>
 
             <div className="hidden flex-1 flex-wrap items-center justify-end gap-2 text-xs md:flex lg:gap-3 lg:text-sm">
               <Link
@@ -31,23 +36,24 @@ export default function RootLayout({
                 style={{
                   cursor: "pointer",
                   background: "linear-gradient(135deg, #fbbf24, #facc15, #10b981)",
-                  padding: "8px 20px",
+                  padding: "10px 24px",
                   borderRadius: "999px",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   color: "#020617",
-                  boxShadow: "0 4px 14px 0 rgba(251, 191, 36, 0.4)",
-                  transition: "all 0.3s ease",
+                  boxShadow: "0 6px 18px 0 rgba(251, 191, 36, 0.35)",
+                  transition: "all 0.25s ease",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "6px",
                 }}
+                className="hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(251,191,36,0.45)] active:translate-y-0 active:scale-[0.98]"
               >
                 BillShield
               </Link>
-              <Link href="/" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>Home</Link>
-              <Link href="/calculator" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>Calculate Savings</Link>
-              <Link href="/how-it-works" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>How it Works</Link>
-              <Link href="/contact" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>Contact Us</Link>
+              <Link href="/" className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]" style={{ cursor: "pointer" }}>Home</Link>
+              <Link href="/calculator" className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]" style={{ cursor: "pointer" }}>Calculate Savings</Link>
+              <Link href="/how-it-works" className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]" style={{ cursor: "pointer" }}>How it Works</Link>
+              <Link href="/contact" className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]" style={{ cursor: "pointer" }}>Contact Us</Link>
             </div>
           </div>
 
