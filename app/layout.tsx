@@ -22,10 +22,10 @@ export default function RootLayout({
       <body className="bg-slate-950 text-white pt-28 md:pt-20">
         {/* GLOBAL NAVBAR */}
         <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-10 md:py-5">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-4 lg:px-10 lg:py-5">
             <div className="shrink-0 text-lg font-semibold md:text-[22px]">Sooryx</div>
 
-            <div className="hidden flex-1 items-center justify-end gap-3 text-sm md:flex lg:gap-6 lg:text-base xl:gap-8">
+            <div className="hidden flex-1 flex-wrap items-center justify-end gap-2 text-xs md:flex lg:gap-3 lg:text-sm">
               <Link
                 href="/billshield"
                 style={{
@@ -44,10 +44,10 @@ export default function RootLayout({
               >
                 BillShield
               </Link>
-              <Link href="/" className="whitespace-nowrap" style={{ cursor: "pointer" }}>Home</Link>
-              <Link href="/calculator" className="whitespace-nowrap" style={{ cursor: "pointer" }}>Calculate Savings</Link>
-              <Link href="/how-it-works" className="whitespace-nowrap" style={{ cursor: "pointer" }}>How it Works</Link>
-              <Link href="/contact" className="whitespace-nowrap" style={{ cursor: "pointer" }}>Contact Us</Link>
+              <Link href="/" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>Home</Link>
+              <Link href="/calculator" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>Calculate Savings</Link>
+              <Link href="/how-it-works" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>How it Works</Link>
+              <Link href="/contact" className="whitespace-nowrap rounded-full border border-white/20 px-3 py-1 text-white/95 hover:bg-white/10" style={{ cursor: "pointer" }}>Contact Us</Link>
             </div>
           </div>
 
