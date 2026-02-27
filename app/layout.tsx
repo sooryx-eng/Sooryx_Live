@@ -22,10 +22,10 @@ export default function RootLayout({
       <body className="bg-slate-950 text-white pt-28 md:pt-20">
         {/* GLOBAL NAVBAR */}
         <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-10 md:py-5">
-            <div className="text-lg font-semibold md:text-[22px]">Sooryx</div>
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-10 md:py-5">
+            <div className="shrink-0 text-lg font-semibold md:text-[22px]">Sooryx</div>
 
-            <div className="hidden items-center gap-8 md:flex">
+            <div className="hidden flex-1 items-center justify-end gap-3 text-sm md:flex lg:gap-6 lg:text-base xl:gap-8">
               <Link
                 href="/billshield"
                 style={{
@@ -44,10 +44,10 @@ export default function RootLayout({
               >
                 BillShield
               </Link>
-              <Link href="/" style={{ cursor: "pointer" }}>Home</Link>
-              <Link href="/calculator" style={{ cursor: "pointer" }}>Calculate Savings</Link>
-              <Link href="/how-it-works" style={{ cursor: "pointer" }}>How it Works</Link>
-              <Link href="/contact" style={{ cursor: "pointer" }}>Contact Us</Link>
+              <Link href="/" className="whitespace-nowrap" style={{ cursor: "pointer" }}>Home</Link>
+              <Link href="/calculator" className="whitespace-nowrap" style={{ cursor: "pointer" }}>Calculate Savings</Link>
+              <Link href="/how-it-works" className="whitespace-nowrap" style={{ cursor: "pointer" }}>How it Works</Link>
+              <Link href="/contact" className="whitespace-nowrap" style={{ cursor: "pointer" }}>Contact Us</Link>
             </div>
           </div>
 
