@@ -75,13 +75,14 @@ export default function RootLayout({
                   gap: "6px",
                   fontSize: "13px",
                 }}
+                className="transition duration-150 active:scale-[0.97] active:shadow-[0_8px_18px_rgba(251,191,36,0.45)]"
               >
                 BillShield
               </Link>
-              <Link href="/" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">Home</Link>
-              <Link href="/calculator" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">Calculate Savings</Link>
-              <Link href="/how-it-works" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">How it Works</Link>
-              <Link href="/contact" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90">Contact Us</Link>
+              <Link href="/" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Home</Link>
+              <Link href="/calculator" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Calculate Savings</Link>
+              <Link href="/how-it-works" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">How it Works</Link>
+              <Link href="/contact" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Contact Us</Link>
             </div>
           </div>
         </nav>
