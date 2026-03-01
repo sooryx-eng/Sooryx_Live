@@ -57,32 +57,35 @@ export default function RootLayout({
             </div>
           </div>
 
-          <div className="border-t border-white/10 px-4 py-2 md:hidden">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="border-t border-white/10 px-4 py-3 md:hidden">
+            <div className="space-y-2">
               <Link
                 href="/billshield"
                 style={{
                   cursor: "pointer",
                   background: "linear-gradient(135deg, #fbbf24, #facc15, #10b981)",
-                  padding: "6px 14px",
+                  padding: "9px 14px",
                   borderRadius: "999px",
                   fontWeight: 600,
                   color: "#020617",
                   boxShadow: "0 4px 14px 0 rgba(251, 191, 36, 0.3)",
                   transition: "all 0.3s ease",
-                  display: "inline-flex",
+                  display: "flex",
+                  justifyContent: "center",
                   alignItems: "center",
                   gap: "6px",
-                  fontSize: "13px",
+                  fontSize: "14px",
                 }}
-                className="transition duration-150 active:scale-[0.97] active:shadow-[0_8px_18px_rgba(251,191,36,0.45)]"
+                className="w-full transition duration-150 active:scale-[0.99] active:shadow-[0_8px_18px_rgba(251,191,36,0.45)]"
               >
                 BillShield
               </Link>
-              <Link href="/" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Home</Link>
-              <Link href="/calculator" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Calculate Savings</Link>
-              <Link href="/how-it-works" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">How it Works</Link>
-              <Link href="/contact" className="rounded-full border border-white/20 px-3 py-1 text-sm text-white/90 transition duration-150 active:scale-[0.97] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Contact Us</Link>
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/" className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Home</Link>
+                <Link href="/calculator" className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Savings</Link>
+                <Link href="/how-it-works" className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">How it Works</Link>
+                <Link href="/contact" className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]">Contact</Link>
+              </div>
             </div>
           </div>
         </nav>
