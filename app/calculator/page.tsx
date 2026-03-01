@@ -581,6 +581,25 @@ export default function SolarCalculator() {
                 <li>• CAPEX benchmark: ₹55,000 per kW</li>
                 <li>• Savings estimate excludes fixed charges, taxes, and policy changes</li>
               </ul>
+
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">Estimated monthly savings</p>
+                  <p className="mt-1 text-sm font-bold text-emerald-800">₹{Math.round(monthlySavings).toLocaleString()}</p>
+                </div>
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-700">Estimated annual savings</p>
+                  <p className="mt-1 text-sm font-bold text-amber-800">₹{Math.round(annualSavings).toLocaleString()}</p>
+                </div>
+                <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-blue-700">Payback horizon</p>
+                  <p className="mt-1 text-sm font-bold text-blue-800">{annualSavings > 0 ? `${paybackPeriod.toFixed(1)} yrs` : "Increase system size"}</p>
+                </div>
+                <div className="rounded-lg border border-purple-200 bg-purple-50 p-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-purple-700">25-year potential</p>
+                  <p className="mt-1 text-sm font-bold text-purple-800">₹{Math.round(annualSavings * 25).toLocaleString()}</p>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         </div>
