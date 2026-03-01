@@ -564,18 +564,25 @@ export default function SolarCalculator() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
-              className="rounded-2xl border border-slate-200 bg-white/70 p-5"
+              className="rounded-2xl border border-slate-200 bg-slate-50/80 p-6"
             >
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Assumptions used
-              </p>
-              <ul className="space-y-1 text-xs text-slate-600">
-                <li>• Peak sun hours: {peakSunHours.toFixed(1)} hours/day</li>
-                <li>• System performance ratio: {(systemEfficiency * 100).toFixed(0)}%</li>
-                <li>• Net-metering realization factor: 90%</li>
-                <li>• CAPEX benchmark: ₹55,000 per kW</li>
-                <li>• Savings estimate excludes fixed charges, taxes, and policy changes</li>
-              </ul>
+              <div className="flex items-start gap-4">
+                <div className="rounded-lg bg-white/70 p-3">
+                  <Calculator className="size-6 text-slate-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                    Assumptions used
+                  </p>
+                  <ul className="space-y-1 text-xs text-slate-600">
+                    <li>• Peak sun hours: {peakSunHours.toFixed(1)} hours/day</li>
+                    <li>• System performance ratio: {(systemEfficiency * 100).toFixed(0)}%</li>
+                    <li>• Net-metering realization factor: 90%</li>
+                    <li>• CAPEX benchmark: ₹55,000 per kW</li>
+                    <li>• Savings estimate excludes fixed charges, taxes, and policy changes</li>
+                  </ul>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         </div>
