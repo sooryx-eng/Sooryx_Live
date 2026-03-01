@@ -89,58 +89,82 @@ export default function SolarCalculator() {
   const [rooftopArea, setRooftopArea] = useState(100);
   const [systemSize, setSystemSize] = useState(5);
 
-  // Calculate consumption based on bill and tariff
-  const calculateConsumption = (bill: number, tariffStructure: any[], userType: string) => {
-    if (userType === "commercial") {
-      const tariffValue = TARIFF_DATA[state].commercial;
-      return Math.round(bill / tariffValue);
+  const parseSlabRange = (slabLabel: string) => {
+    const plusMatch = slabLabel.match(/(\d+)\+\s*kWh/i);
+    if (plusMatch) {
+      return { from: Number(plusMatch[1]), to: Infinity };
     }
 
-    // For residential with tiered rates, estimate consumption from bill
-    let estimatedConsumption = 0;
-    let remainingBill = bill;
-    const slabs = tariffStructure;
-    
-    // Slab ranges: 0-100 (100 units), 101-300 (200 units), 301-500 (200 units), 500+ (infinite)
-    const slabSizes = [100, 200, 200, Infinity];
+    const rangeMatch = slabLabel.match(/(\d+)\s*-\s*(\d+)\s*kWh/i);
+    if (rangeMatch) {
+      return { from: Number(rangeMatch[1]), to: Number(rangeMatch[2]) };
+    }
 
-    for (let i = 0; i < slabs.length; i++) {
-      const slabRate = slabs[i].rate;
-      const slabSize = slabSizes[i];
+    return { from: 0, to: Infinity };
+  };
 
-      if (remainingBill <= 0) break;
+  const getResidentialSlabs = (structure: Array<{ slab: string; rate: number; description: string }>) => {
+    return structure
+      .map((item) => ({ ...parseSlabRange(item.slab), rate: item.rate }))
+      .sort((a, b) => a.from - b.from);
+  };
 
-      const maxSlabBill = slabSize * slabRate;
-      if (remainingBill >= maxSlabBill && slabSize !== Infinity) {
-        estimatedConsumption += slabSize;
-        remainingBill -= maxSlabBill;
-      } else {
-        estimatedConsumption += remainingBill / slabRate;
-        remainingBill = 0;
+  const calculateMonthlyBillFromConsumption = (
+    consumption: number,
+    tariffStructure: Array<{ slab: string; rate: number; description: string }>,
+    customerType: "residential" | "commercial",
+  ) => {
+    if (customerType === "commercial") {
+      return consumption * TARIFF_DATA[state].commercial;
+    }
+
+    const slabs = getResidentialSlabs(tariffStructure);
+    let totalBill = 0;
+
+    for (const slab of slabs) {
+      const effectiveFrom = slab.from === 0 ? 0 : slab.from;
+      const slabUpperBound = Number.isFinite(slab.to) ? slab.to : consumption;
+      const unitsInSlab = Math.max(0, Math.min(consumption, slabUpperBound) - effectiveFrom);
+
+      if (unitsInSlab > 0) {
+        totalBill += unitsInSlab * slab.rate;
       }
     }
 
-    return Math.round(estimatedConsumption);
+    return totalBill;
   };
 
-  // Calculate tiered bill
-  const calculateTieredBill = (consumption: number, tariffStructure: any[]) => {
-    let totalBill = 0;
-    let remainingConsumption = consumption;
-
-    const slabLimits = [100, 300, 500, Infinity];
-
-    for (let i = 0; i < tariffStructure.length && remainingConsumption > 0; i++) {
-      const currentSlabLimit = slabLimits[i];
-      const previousSlabLimit = i === 0 ? 0 : slabLimits[i - 1];
-      const slabSize = currentSlabLimit - previousSlabLimit;
-
-      const consumedInSlab = Math.min(remainingConsumption, slabSize);
-      totalBill += consumedInSlab * tariffStructure[i].rate;
-      remainingConsumption -= consumedInSlab;
+  const estimateMonthlyConsumptionFromBill = (
+    bill: number,
+    tariffStructure: Array<{ slab: string; rate: number; description: string }>,
+    customerType: "residential" | "commercial",
+  ) => {
+    if (customerType === "commercial") {
+      return bill / TARIFF_DATA[state].commercial;
     }
 
-    return Math.round(totalBill);
+    let low = 0;
+    let high = 5000;
+
+    while (calculateMonthlyBillFromConsumption(high, tariffStructure, customerType) < bill) {
+      high *= 2;
+      if (high > 100000) {
+        break;
+      }
+    }
+
+    for (let i = 0; i < 40; i++) {
+      const mid = (low + high) / 2;
+      const estimatedBill = calculateMonthlyBillFromConsumption(mid, tariffStructure, customerType);
+
+      if (estimatedBill < bill) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+    }
+
+    return (low + high) / 2;
   };
 
   // Get tariff data for selected state
@@ -150,7 +174,13 @@ export default function SolarCalculator() {
       : [{ rate: TARIFF_DATA[state].commercial }];
 
   // Calculations for Savings Tab
-  const monthlyConsumption = calculateConsumption(monthlyBill, tariffStructure, userType);
+  const monthlyConsumption = Math.round(
+    estimateMonthlyConsumptionFromBill(
+      monthlyBill,
+      TARIFF_DATA[state].residential,
+      userType,
+    ),
+  );
   const annualConsumption = monthlyConsumption * 12;
 
   // Solar panel typical metrics
@@ -160,28 +190,29 @@ export default function SolarCalculator() {
   const peakSunHours = 5.0; // Average peak sun hours in India (varies 4.5-6 by location)
 
   // Calculate daily and annual generation for given system size
-  const dailyGeneration = systemSize * 1000 * peakSunHours * systemEfficiency; // Wh
-  const annualGeneration = dailyGeneration * 365; // Wh
+  const dailyGenerationKwh = systemSize * peakSunHours * systemEfficiency;
+  const annualGenerationKwh = dailyGenerationKwh * 365;
 
   // Calculate required system size based on consumption
-  const requiredDailyGeneration = annualConsumption * 1000 / 365; // Wh needed
-  const autoCalculatedSystemSize = requiredDailyGeneration / (1000 * peakSunHours * systemEfficiency); // kW
+  const requiredDailyGenerationKwh = annualConsumption / 365;
+  const autoCalculatedSystemSize = requiredDailyGenerationKwh / (peakSunHours * systemEfficiency);
 
   // Calculate bills and savings
-  const currentDailyBill = monthlyBill / 30;
   const currentAnnualBill = monthlyBill * 12;
 
-  // Solar generation in kWh
-  const solarGenerationDaily = dailyGeneration / 1000; // kWh
-  const solarGenerationAnnual = annualGeneration / 1000; // kWh
-
   // Net metering utilization: 90% accounts for export credits and self-consumption patterns
-  const offsetConsumption = solarGenerationAnnual * 0.90; // in kWh (units)
-  const remainingConsumptionAfterSolar = Math.max(0, annualConsumption - offsetConsumption);
+  const offsetConsumptionAnnual = annualGenerationKwh * 0.90;
+  const remainingAnnualConsumptionAfterSolar = Math.max(0, annualConsumption - offsetConsumptionAnnual);
+  const remainingMonthlyConsumptionAfterSolar = remainingAnnualConsumptionAfterSolar / 12;
 
-  // Calculate bill after solar
-  const billAfterSolar = calculateTieredBill(remainingConsumptionAfterSolar, tariffStructure);
-  const annualSavings = Math.max(0, currentAnnualBill - billAfterSolar);
+  // Calculate bill after solar (monthly slab billing, then annualized)
+  const monthlyBillAfterSolar = calculateMonthlyBillFromConsumption(
+    remainingMonthlyConsumptionAfterSolar,
+    TARIFF_DATA[state].residential,
+    userType,
+  );
+  const annualBillAfterSolar = monthlyBillAfterSolar * 12;
+  const annualSavings = Math.max(0, currentAnnualBill - annualBillAfterSolar);
   const monthlySavings = Math.max(0, annualSavings / 12);
 
   // System cost and ROI (typical: ₹50,000-60,000 per kW)
@@ -456,8 +487,8 @@ export default function SolarCalculator() {
             <ResultCard
               icon={<Sun className="size-6 text-yellow-600" />}
               title="Annual Solar Generation"
-              value={`${(solarGenerationAnnual / 1000).toFixed(1)} MWh`}
-              subtitle={`${(dailyGeneration / 1000).toFixed(1)} kWh/day`}
+              value={`${(annualGenerationKwh / 1000).toFixed(1)} MWh`}
+              subtitle={`${dailyGenerationKwh.toFixed(1)} kWh/day`}
               bgColor="bg-yellow-50"
               borderColor="border-yellow-200"
             />
@@ -706,13 +737,13 @@ export default function SolarCalculator() {
                 <div className="flex justify-between">
                   <span className="text-slate-600">Daily Generation:</span>
                   <span className="font-semibold text-slate-900">
-                    {(dailyGeneration / 1000).toFixed(1)} kWh
+                    {dailyGenerationKwh.toFixed(1)} kWh
                   </span>
                 </div>
                 <div className="flex justify-between border-t pt-2">
                   <span className="text-slate-600">Annual Generation:</span>
                   <span className="font-semibold text-slate-900">
-                    {(annualGeneration / 1000000).toFixed(2)} MWh
+                    {(annualGenerationKwh / 1000).toFixed(2)} MWh
                   </span>
                 </div>
               </div>
