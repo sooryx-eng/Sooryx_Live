@@ -35,10 +35,12 @@ export default function BillShield() {
   const discountedCost = creditAmount * (1 - discountPercent / 100);
   const userSavings = creditAmount - discountedCost;
 
-  // Business metrics
+  // Calculator metrics
   const creditsCoverageKwh = Math.round(creditAmount / electricityTariff);
-  const monthlyBillReduction = discountedCost / 12;
-  const yearlyBillReduction = discountedCost;
+  const billShieldRatePerKwh = discountedCost / creditsCoverageKwh;
+  const savingsPerKwh = electricityTariff - billShieldRatePerKwh;
+  const monthlyBillReduction = userSavings / 12;
+  const yearlyBillReduction = userSavings;
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -190,7 +192,7 @@ export default function BillShield() {
 
               <div className="rounded-2xl border border-slate-200/70 bg-white/80 p-6 backdrop-blur">
                 <label className="mb-4 block text-sm font-semibold uppercase tracking-wider text-amber-600">
-                  kWh Units to Buy
+                  Credit Value to Buy (₹)
                 </label>
                 <div className="relative mb-4">
                   <input
@@ -219,12 +221,12 @@ export default function BillShield() {
                   ))}
                 </div>
                 <div className="rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 p-4">
-                  <p className="text-sm text-slate-600 mb-1">Total Cost (₹)</p>
+                  <p className="text-sm text-slate-600 mb-1">Retail Bill Value (₹)</p>
                   <p className="text-3xl font-bold text-slate-900">
                     ₹{creditAmount.toLocaleString()}
                   </p>
                   <p className="text-xs text-slate-500 mt-2">
-                    = {creditsCoverageKwh.toLocaleString()} kWh @ ₹{(creditAmount / creditsCoverageKwh).toFixed(2)}/kWh
+                    = {creditsCoverageKwh.toLocaleString()} kWh @ ₹{electricityTariff.toFixed(2)}/kWh (DISCOM tariff)
                   </p>
                 </div>
               </div>
@@ -289,7 +291,7 @@ export default function BillShield() {
                         {creditsCoverageKwh.toLocaleString()}
                       </p>
                       <p className="text-xs text-slate-500 mt-1">
-                        At ₹{(creditAmount / creditsCoverageKwh).toFixed(2)}/kWh (bulk rate)
+                        DISCOM: ₹{electricityTariff.toFixed(2)}/kWh · BillShield: ₹{billShieldRatePerKwh.toFixed(2)}/kWh
                       </p>
                     </div>
 
@@ -301,6 +303,9 @@ export default function BillShield() {
                       <div className="mt-3 flex items-center gap-2">
                         <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
                           {discountPercent}% off retail
+                        </span>
+                        <span className="text-xs font-semibold text-slate-600">
+                          Save ₹{savingsPerKwh.toFixed(2)}/kWh
                         </span>
                       </div>
                     </div>
@@ -333,11 +338,14 @@ export default function BillShield() {
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-slate-600">Annual savings</span>
+                        <span className="text-slate-600">Total savings on this purchase</span>
                         <span className="font-semibold text-slate-900">
                           ≈ ₹{Math.round(yearlyBillReduction).toLocaleString()}
                         </span>
                       </div>
+                      <p className="text-xs text-slate-500">
+                        Monthly value shown is an estimate if savings are spread across 12 months.
+                      </p>
                     </div>
                   </div>
                 </div>
