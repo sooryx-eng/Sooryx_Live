@@ -17,17 +17,14 @@ export default function SolarCalculator() {
   // Calculate monthly consumption from bill
   const monthlyConsumptionKwh = Math.round(monthlyBill / AVERAGE_RATE_PER_KWH);
 
-  // System sizing calculation (industry standard: 1 kW per 100-120 sqm)
-  // Conservative: 1 kW per 120 sqm (more realistic for Indian conditions)
-  const AREA_PER_KW_SQM = 120;
-  const recommendedSystemSizeKw = Math.round((monthlyConsumptionKwh * 12) / (PEAK_SUN_HOURS_PER_DAY * 365) * 1.2); // 20% buffer for losses
+  // System sizing calculation - based on consumption only
+  // To match 100% of consumption: annual_kwh = monthly_consumption * 12
+  // system_size = annual_kwh / (peak_sun_hours * 365)
+  // With 20% buffer for losses and degradation over time
+  const recommendedSystemSizeKw = Math.round((monthlyConsumptionKwh * 12) / (PEAK_SUN_HOURS_PER_DAY * 365) * 1.2);
 
-  // Alternative sizing based on available area (assuming 100 sqm typical roof)
-  const TYPICAL_ROOF_AREA_SQM = 100;
-  const maxSystemSizeKw = Math.round(TYPICAL_ROOF_AREA_SQM / AREA_PER_KW_SQM);
-
-  // Use the smaller of the two for realistic sizing
-  const systemSizeKw = Math.min(recommendedSystemSizeKw, maxSystemSizeKw);
+  // Use recommended size directly (no rooftop constraint for now)
+  const systemSizeKw = recommendedSystemSizeKw;
 
   // Annual generation calculation
   const annualGenerationKwh = Math.round(systemSizeKw * PEAK_SUN_HOURS_PER_DAY * 365);
@@ -70,6 +67,10 @@ export default function SolarCalculator() {
 
   // Coverage percentage
   const coveragePercentage = Math.round((monthlyGenerationKwh / monthlyConsumptionKwh) * 100);
+
+  // Rooftop area requirement (for reference)
+  const AREA_PER_KW_SQM = 120; // industry standard
+  const rooftopAreaRequired = systemSizeKw * AREA_PER_KW_SQM;
 
   return (
     <div className="bg-gradient-to-br from-slate-900/80 to-slate-900/60 p-8 rounded-2xl mt-12">
@@ -133,6 +134,11 @@ export default function SolarCalculator() {
                 icon={<Zap size={16} />}
               />
               <Metric
+                label="Rooftop Area Needed"
+                value={`${rooftopAreaRequired} sqm`}
+                icon={<Sun size={16} />}
+              />
+              <Metric
                 label="Monthly Generation"
                 value={`${monthlyGenerationKwh.toLocaleString()} kWh`}
                 icon={<Sun size={16} />}
@@ -172,7 +178,7 @@ export default function SolarCalculator() {
             <p>• Assumes 5 peak sun hours/day (conservative Indian average)</p>
             <p>• System cost: ₹{SYSTEM_COST_PER_KW.toLocaleString()}/kW (current market rate)</p>
             <p>• Includes 0.5% annual panel degradation and maintenance costs</p>
-            <p>• Based on 120 sqm roof area per kW (industry standard)</p>
+            <p>• Rooftop area: {rooftopAreaRequired} sqm based on 120 sqm/kW (verify availability with installer)</p>
           </div>
 
           <div className="mt-6">
