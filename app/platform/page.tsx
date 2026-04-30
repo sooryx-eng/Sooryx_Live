@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Building2, Factory, Home, Sparkles, SunMedium, Zap, TrendingUp, Lightbulb, Users } from "lucide-react";
+import { ArrowRight, Building2, CheckCircle2, Factory, Home, Sparkles, SunMedium, Zap, TrendingUp, Lightbulb, Users } from "lucide-react";
 import GlowingHeader from "../components/GlowingHeader";
 import SolarLineArt from "../components/SolarLineArt";
 import SolarLineArt2 from "../components/SolarLineArt2";
@@ -209,6 +209,98 @@ export default function Platform() {
           </h3>
           <p className="mt-4 max-w-3xl text-slate-600">
             Own your renewable energy source and take control of your electricity costs. Solar isn't just an investment in your home—it's an investment in a sustainable future.
+          </p>
+        </motion.div>
+      </section>
+
+      <section className="mx-auto max-w-7xl border-t border-slate-200/70 px-6 py-16 md:px-10 md:py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-12"
+        >
+          <h2 className="text-center text-3xl font-bold md:text-4xl mb-6">
+            Choose Your Solar Solution
+          </h2>
+          <p className="text-center text-slate-600 max-w-3xl mx-auto">
+            Sooryx offers both on-grid and off-grid solar systems tailored to your needs
+          </p>
+        </motion.div>
+
+        <div className="grid gap-8 md:grid-cols-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="rounded-2xl border border-slate-200/70 bg-white/80 p-8 backdrop-blur"
+          >
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">On-Grid Solar</h3>
+            <p className="text-slate-600 mb-4">
+              Connected to your local electricity grid. Solar panels generate power that you use immediately, and excess goes back to the grid.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Lower upfront investment</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Minimal maintenance required</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Instantly reduces your monthly bills</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Ideal for most residential and commercial properties</span>
+              </li>
+            </ul>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="rounded-2xl border border-slate-200/70 bg-white/80 p-8 backdrop-blur"
+          >
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">Off-Grid Solar</h3>
+            <p className="text-slate-600 mb-4">
+              Complete energy independence with battery storage. Generate, store, and use your own power 24/7.
+            </p>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Complete energy independence</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Works 24/7 with battery backup</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Perfect for remote locations</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="size-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <span className="text-slate-600">Maximum control over power generation and usage</span>
+              </li>
+            </ul>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="mt-10 rounded-2xl bg-gradient-to-r from-amber-50 to-emerald-50 border border-amber-200/70 p-8"
+        >
+          <p className="text-slate-700">
+            <span className="font-bold text-amber-600">Not sure which is right for you?</span> Our solar experts will assess your property, electricity usage, and goals to recommend the best solution. Both on-grid and off-grid systems deliver long-term energy and cost savings.
           </p>
         </motion.div>
       </section>
