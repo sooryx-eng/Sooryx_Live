@@ -9,10 +9,16 @@ export default function SolarCalculator() {
   // Industry-standard constants for India
   const AVERAGE_RATE_PER_KWH = 8.5; // ₹/kWh - industry average
   const PEAK_SUN_HOURS_PER_DAY = 5.0; // hours - conservative estimate for India
-  const SYSTEM_COST_PER_KW = 55000; // ₹/kW - current market rate
   const SYSTEM_LIFETIME_YEARS = 25; // years
   const MAINTENANCE_COST_PERCENT = 0.5; // % of system cost per year
   const DEGRADATION_RATE = 0.005; // 0.5% per year panel degradation
+
+  const getSystemCostPerKw = (sizeKw: number) => {
+    if (sizeKw <= 3) return 62000;
+    if (sizeKw <= 6) return 59000;
+    if (sizeKw <= 10) return 56000;
+    return 53000;
+  };
 
   // Calculate monthly consumption from bill
   const monthlyConsumptionKwh = Math.round(monthlyBill / AVERAGE_RATE_PER_KWH);
@@ -32,14 +38,15 @@ export default function SolarCalculator() {
   // Monthly generation (accounting for seasonal variation)
   const monthlyGenerationKwh = Math.round(annualGenerationKwh / 12);
 
-  // System cost calculation
-  const systemCost = systemSizeKw * SYSTEM_COST_PER_KW;
+  // System cost calculation with size-based pricing
+  const systemCostPerKw = getSystemCostPerKw(systemSizeKw);
+  const systemCost = Math.round(systemSizeKw * systemCostPerKw);
 
   // Annual savings calculation (accounting for degradation)
   const calculateAnnualSavings = (year: number) => {
     const degradationFactor = Math.pow(1 - DEGRADATION_RATE, year);
     const annualGeneration = annualGenerationKwh * degradationFactor;
-    const annualSavings = annualGeneration * AVERAGE_RATE_PER_KWH;
+    const annualSavings = Math.min(annualGeneration, monthlyConsumptionKwh * 12) * AVERAGE_RATE_PER_KWH * 0.9;
     return Math.round(annualSavings);
   };
 
@@ -60,10 +67,11 @@ export default function SolarCalculator() {
   const netLifetimeSavings = totalLifetimeSavings - totalMaintenanceCost;
 
   // Payback period calculation
-  const paybackYears = systemCost / (calculateAnnualSavings(1) - annualMaintenanceCost);
+  const firstYearSavings = calculateAnnualSavings(1);
+  const paybackYears = firstYearSavings > annualMaintenanceCost ? systemCost / (firstYearSavings - annualMaintenanceCost) : 0;
 
   // Monthly savings (first year average)
-  const monthlySavings = Math.round(calculateAnnualSavings(1) / 12);
+  const monthlySavings = Math.round(firstYearSavings / 12);
 
   // Coverage percentage
   const coveragePercentage = Math.round((monthlyGenerationKwh / monthlyConsumptionKwh) * 100);
@@ -86,15 +94,15 @@ export default function SolarCalculator() {
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Input Section */}
-        <div className="space-y-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+        <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
           <div>
             <label className="text-sm text-slate-700 mb-3 block font-semibold">Monthly Electricity Bill (₹)</label>
 
             {/* Slider Section */}
-            <div className="bg-white rounded-lg p-4 mb-4 border border-slate-200">
-              <div className="flex justify-between items-center mb-3">
+            <div className="bg-white rounded-lg p-3 mb-3 border border-slate-200">
+              <div className="flex justify-between items-center mb-2">
                 <span className="text-xs text-slate-600">₹1,000</span>
-                <span className="text-2xl font-bold text-emerald-600">₹{monthlyBill.toLocaleString()}</span>
+                <span className="text-xl font-bold text-emerald-600">₹{monthlyBill.toLocaleString()}</span>
                 <span className="text-xs text-slate-600">₹50,000</span>
               </div>
               <input
@@ -112,7 +120,7 @@ export default function SolarCalculator() {
               <p className="text-xs text-slate-500 mt-2">Drag to adjust your average monthly bill</p>
             </div>
 
-            <div className="text-xs text-slate-600 space-y-1">
+            <div className="text-sm text-slate-700 space-y-1">
               <p>Estimated monthly consumption: <strong>{monthlyConsumptionKwh.toLocaleString()} kWh</strong></p>
             </div>
           </div>
