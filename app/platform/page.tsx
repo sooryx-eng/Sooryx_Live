@@ -48,8 +48,6 @@ export default function Platform() {
     "Homes • Rooftop + Finance",
     "Societies • Zero-cost common area solar",
     "Businesses • Predictable power spend",
-    "Tenants • Savings without rooftop ownership",
-    "Sooryx Credits • Distributed solar access",
   ];
 
   return (
@@ -97,8 +95,7 @@ export default function Platform() {
           </GlowingHeader>
 
           <p className="mt-8 max-w-4xl text-lg leading-relaxed text-slate-600 md:text-2xl">
-            Solar installations for homes, societies, businesses, and factories. Electricity discounts for
-            tenants, renters, and anyone who can&apos;t install solar.
+            Solar installations for homes, societies, businesses, and factories. Own the power you generate and reduce your electricity costs.
           </p>
         </motion.div>
 
@@ -163,14 +160,13 @@ export default function Platform() {
           className="mb-16"
         >
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200/70 bg-emerald-50 px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] text-emerald-700">
-            <SunMedium size={13} /> How It Works
+            <SunMedium size={13} /> Solar Benefits
           </div>
           <GlowingHeader as="h2" className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
-            Solar savings without the roof
+            Own your solar, maximize your savings
           </GlowingHeader>
           <p className="mt-6 max-w-3xl text-xl leading-relaxed text-slate-600">
-            Tenants, renters, and apartment dwellers deserve solar benefits too. Sooryx pools solar energy from distributed
-            installations and credits your electricity bill. It's like owning solar without the upfront cost.
+            Get a rooftop solar system designed for your home or business. Generate clean energy, reduce your electricity bills, and increase your property value. Start saving immediately after installation.
           </p>
         </motion.div>
 
@@ -180,20 +176,20 @@ export default function Platform() {
           <div className="grid gap-5 md:grid-cols-3">
             <BenefitCard
               icon={<Zap size={24} />}
-              title="Instant Savings"
-              description="Credits apply directly to your monthly bill. Lower electricity costs from day one."
+              title="Maximum Savings"
+              description="Generate your own energy and slash electricity bills by up to 70%. Full control over your power generation."
               color="amber"
             />
             <BenefitCard
               icon={<TrendingUp size={24} />}
-              title="Scalable Returns"
-              description="As solar generation grows, so do your benefits. More installations = bigger savings pool."
+              title="Long-Term ROI"
+              description="Solar systems pay for themselves in 5-7 years. Then enjoy 25+ years of free electricity and increasing returns."
               color="emerald"
             />
             <BenefitCard
               icon={<Users size={24} />}
-              title="Community Powered"
-              description="Join thousands of renters getting solar benefits. No new technology required—just your meter."
+              title="24/7 Support"
+              description="Professional installation, monitoring, and maintenance. Peace of mind with warranty and expert support."
               color="blue"
             />
           </div>
@@ -209,11 +205,10 @@ export default function Platform() {
         >
           <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Why this matters</p>
           <h3 className="mt-4 text-3xl font-semibold leading-tight text-slate-900 md:text-4xl">
-            Whether you own, rent, or run a business, you deserve access to solar savings.
+            Energy independence is the future. Start today.
           </h3>
           <p className="mt-4 max-w-3xl text-slate-600">
-            Sooryx enables flexible adoption models so you can move to cleaner power without waiting on property
-            constraints.
+            Own your renewable energy source and take control of your electricity costs. Solar isn't just an investment in your home—it's an investment in a sustainable future.
           </p>
         </motion.div>
       </section>
