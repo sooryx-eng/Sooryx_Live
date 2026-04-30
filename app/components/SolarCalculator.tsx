@@ -1,17 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sun, Calculator, TrendingUp, Zap } from "lucide-react";
+import Link from "next/link";
+import { Sun, Calculator, TrendingUp, Zap, Home, Building2 } from "lucide-react";
 
 export default function SolarCalculator() {
   const [monthlyBill, setMonthlyBill] = useState<number>(5000);
+  const [customerType, setCustomerType] = useState<"residential" | "commercial">("residential");
 
   // Industry-standard constants for India
-  const AVERAGE_RATE_PER_KWH = 8.5; // ₹/kWh - industry average
-  const PEAK_SUN_HOURS_PER_DAY = 5.0; // hours - conservative estimate for India
-  const SYSTEM_LIFETIME_YEARS = 25; // years
-  const MAINTENANCE_COST_PERCENT = 0.5; // % of system cost per year
-  const DEGRADATION_RATE = 0.005; // 0.5% per year panel degradation
+  // Electricity rates (as per 2025-26 average across major DISCOMs)
+  const RESIDENTIAL_RATE_PER_KWH = 8.5; // ₹/kWh - residential average
+  const COMMERCIAL_RATE_PER_KWH = 11.0; // ₹/kWh - commercial average (typically 20-30% higher)
+  const AVERAGE_RATE_PER_KWH = customerType === "residential" ? RESIDENTIAL_RATE_PER_KWH : COMMERCIAL_RATE_PER_KWH;
+  
+  const PEAK_SUN_HOURS_PER_DAY = 5.0; // hours - conservative estimate for India (varies 4.5-6.5)
+  const SYSTEM_LIFETIME_YEARS = 25; // years - standard panel warranty period
+  const MAINTENANCE_COST_PERCENT = 0.5; // % of system cost per year - industry standard
+  const DEGRADATION_RATE = 0.005; // 0.5% per year - certified panel degradation rate
+  
+  // Note: Savings calculations assume SELF-CONSUMPTION ONLY (no excess generation sales assumed)
+  // Most DISCOM net metering policies limit export or restrict excess credits
+  // Conservative approach: cap generation to actual consumption (Math.min cap in calculateAnnualSavings)
+  // This ensures projections remain realistic for both residential and commercial customers
 
   const getSystemCostPerKw = (sizeKw: number) => {
     if (sizeKw <= 3) return 62000;
@@ -43,10 +54,18 @@ export default function SolarCalculator() {
   const systemCost = Math.round(systemSizeKw * systemCostPerKw);
 
   // Annual savings calculation (accounting for degradation)
+  // IMPORTANT: Savings capped at actual consumption - NO excess generation assumed to be sold
+  // This follows conservative industry practice where most customers use generation for self-consumption
   const calculateAnnualSavings = (year: number) => {
     const degradationFactor = Math.pow(1 - DEGRADATION_RATE, year);
-    const annualGeneration = annualGenerationKwh * degradationFactor;
-    const annualSavings = Math.min(annualGeneration, monthlyConsumptionKwh * 12) * AVERAGE_RATE_PER_KWH * 0.9;
+    const degradedGeneration = annualGenerationKwh * degradationFactor;
+    const annualConsumption = monthlyConsumptionKwh * 12;
+    
+    // Cap generation to consumption - prevents overestimation from excess exports
+    // Multiplied by 0.9 to account for system losses (inverter, wiring, soiling)
+    const usableGeneration = Math.min(degradedGeneration, annualConsumption) * 0.9;
+    const annualSavings = usableGeneration * AVERAGE_RATE_PER_KWH;
+    
     return Math.round(annualSavings);
   };
 
@@ -62,9 +81,9 @@ export default function SolarCalculator() {
   // Annual maintenance cost
   const annualMaintenanceCost = Math.round(systemCost * MAINTENANCE_COST_PERCENT / 100);
 
-  // Net lifetime savings (after maintenance)
+  // Total maintenance and net benefit
   const totalMaintenanceCost = annualMaintenanceCost * SYSTEM_LIFETIME_YEARS;
-  const netLifetimeSavings = totalLifetimeSavings - totalMaintenanceCost;
+  const lifetimeNetBenefit = totalLifetimeSavings - totalMaintenanceCost - systemCost;
 
   // Payback period calculation
   const firstYearSavings = calculateAnnualSavings(1);
@@ -73,8 +92,11 @@ export default function SolarCalculator() {
   // Monthly savings (first year average)
   const monthlySavings = Math.round(firstYearSavings / 12);
 
-  // Coverage percentage
-  const coveragePercentage = Math.round((monthlyGenerationKwh / monthlyConsumptionKwh) * 100);
+  // Carbon savings (India grid mix: 0.8 kg CO2/kWh avoided)
+  // Source: Central Electricity Authority, IEA India Carbon Intensity Data
+  // Conservative estimate accounting for grid transition to renewables
+  const lifetimeCo2SavedTons = Math.round(totalLifetimeGeneration * 0.0008 * 10) / 10;
+  const treeEquivalent = Math.round(lifetimeCo2SavedTons / 0.5); // 1 mature tree absorbs ~0.5t CO2/year
 
   // Rooftop area requirement (for reference)
   const AREA_PER_KW_SQM = 6; // industry standard for India (5-6 sqm/kW with spacing)
@@ -87,14 +109,39 @@ export default function SolarCalculator() {
           <Sun className="text-yellow-600" />
         </div>
         <div>
-          <h3 className="text-2xl font-semibold text-slate-900">Solar Calculator</h3>
-          <p className="text-sm text-slate-600">Calculate your solar system size and savings</p>
+          <h3 className="text-2xl font-semibold text-slate-900">Your Solar Powerhouse</h3>
+          <p className="text-sm text-slate-600">Customize your system in seconds</p>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Input Section */}
         <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+          {/* Customer Type Toggle */}
+          <div>
+            <label className="text-sm text-slate-700 mb-3 block font-semibold">I am a</label>
+            <div className="flex gap-3">
+              {["residential", "commercial"].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setCustomerType(type as "residential" | "commercial")}
+                  className={`flex-1 px-3 py-2 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2 ${
+                    customerType === type
+                      ? "bg-emerald-500 text-white border-2 border-emerald-600"
+                      : "bg-white border-2 border-slate-300 text-slate-700 hover:border-emerald-400"
+                  }`}
+                >
+                  {type === "residential" ? (
+                    <><Home size={16} /> Residential</>
+                  ) : (
+                    <><Building2 size={16} /> Commercial</>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Monthly Bill Input */}
           <div>
             <label className="text-sm text-slate-700 mb-3 block font-semibold">Monthly Electricity Bill (₹)</label>
 
@@ -119,10 +166,32 @@ export default function SolarCalculator() {
               />
               <p className="text-xs text-slate-500 mt-2">Drag to adjust your average monthly bill</p>
             </div>
+          </div>
 
-            <div className="text-sm text-slate-700 space-y-1">
-              <p>Estimated monthly consumption: <strong>{monthlyConsumptionKwh.toLocaleString()} kWh</strong></p>
+          {/* Energy Profile */}
+          <div className="bg-white rounded-lg p-3 border border-slate-200 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-slate-600">Monthly Consumption</span>
+              <span className="font-semibold text-slate-900">{monthlyConsumptionKwh.toLocaleString()} kWh</span>
             </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-slate-600">Annual Consumption</span>
+              <span className="font-semibold text-slate-900">{(monthlyConsumptionKwh * 12).toLocaleString()} kWh</span>
+            </div>
+            <div className="border-t border-slate-200 pt-2 flex justify-between items-center">
+              <span className="text-xs text-slate-600">Current Annual Bill</span>
+              <span className="font-semibold text-emerald-600">₹{(monthlyBill * 12).toLocaleString()}</span>
+            </div>
+          </div>
+
+          {/* Key Benefits */}
+          <div className="bg-gradient-to-br from-emerald-50 to-sky-50 rounded-lg p-3 border border-emerald-200 space-y-2">
+            <p className="text-xs font-semibold text-emerald-900 uppercase">✓ {customerType === "residential" ? "Home" : "Business"} Solar Benefits</p>
+            <ul className="text-xs text-emerald-800 space-y-1">
+              <li>• {customerType === "residential" ? "Reduce electricity bills by 60-80%" : "Significant cost reduction on energy"}</li>
+              <li>• {customerType === "residential" ? "25-year panel warranty" : "Tax benefits available"}</li>
+              <li>• {customerType === "residential" ? "Increase property value" : "Lower maintenance costs"}</li>
+            </ul>
           </div>
         </div>
 
@@ -151,14 +220,14 @@ export default function SolarCalculator() {
                 icon={<Sun size={16} />}
               />
               <Metric
-                label="Bill Coverage"
-                value={`${coveragePercentage}%`}
-                icon={<TrendingUp size={16} />}
-              />
-              <Metric
                 label="Monthly Savings"
                 value={`₹${monthlySavings.toLocaleString()}`}
                 icon={<Calculator size={16} />}
+              />
+              <Metric
+                label="CO₂ Saved"
+                value={`${lifetimeCo2SavedTons} t (≈ ${treeEquivalent} trees)`}
+                icon={<Sun size={16} />}
               />
             </div>
 
@@ -170,27 +239,31 @@ export default function SolarCalculator() {
               />
               <Metric
                 label="Payback Period"
-                value={`${paybackYears.toFixed(1)} years`}
+                value={paybackYears > 0 ? `${paybackYears.toFixed(1)} years` : "Not yet positive"}
                 className="text-lg"
               />
               <Metric
-                label={`Lifetime Savings (${SYSTEM_LIFETIME_YEARS} years)`}
-                value={`₹${netLifetimeSavings.toLocaleString()}`}
+                label={`Lifetime Net Benefit (${SYSTEM_LIFETIME_YEARS} yrs)`}
+                value={`₹${lifetimeNetBenefit.toLocaleString()}`}
                 className="text-lg text-emerald-400"
               />
             </div>
           </div>
 
           <div className="mt-4 text-xs text-slate-600 space-y-1">
-            <p>• Assumes 5 peak sun hours/day (conservative Indian average)</p>
-            <p>• Includes 0.5% annual panel degradation and maintenance costs</p>
+            <p>• Assumes {PEAK_SUN_HOURS_PER_DAY} peak sun hours/day (conservative Indian average)</p>
+            <p>• Uses 90% usable generation (accounts for system losses & soiling)</p>
+            <p>• Savings capped to actual consumption - no excess generation sales assumed</p>
+            <p>• CO₂ factor: 0.8 kg/kWh (India grid mix, CEA 2025)</p>
             <p>• Rooftop area: {rooftopAreaRequired} sqm based on 6 sqm/kW (industry standard)</p>
           </div>
 
           <div className="mt-6">
-            <button className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all">
-              Get Detailed Quote
-            </button>
+            <Link href="/contact">
+              <button className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all">
+                Get Detailed Quote
+              </button>
+            </Link>
           </div>
         </div>
       </div>
