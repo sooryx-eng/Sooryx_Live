@@ -1,5 +1,6 @@
 import "./globals.css";
 import Link from "next/link";
+import Image from "next/image";
 import FloatingStartButton from "./components/FloatingStartButton";
 import Footer from "./components/Footer";
 
@@ -25,8 +26,15 @@ export default function RootLayout({
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-4 lg:px-10 lg:py-5">
             <Link
               href="/"
-              className="shrink-0 rounded-full px-2 py-1 text-lg font-semibold text-white transition duration-300 hover:bg-white/5 hover:text-amber-300 md:text-[22px]"
+              className="shrink-0 flex items-center gap-2 rounded-full px-2 py-1 text-lg font-semibold text-white transition duration-300 hover:bg-white/5 hover:text-amber-300 md:text-[22px]"
             >
+              <Image 
+                src="/sooryx-favicon.svg" 
+                alt="Sooryx" 
+                width={32} 
+                height={32}
+                className="h-8 w-8 md:h-9 md:w-9"
+              />
               Sooryx
             </Link>
 

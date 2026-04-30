@@ -25,10 +25,7 @@ export default function SolarCalculator() {
   // This ensures projections remain realistic for both residential and commercial customers
 
   const getSystemCostPerKw = (sizeKw: number) => {
-    if (sizeKw <= 3) return 62000;
-    if (sizeKw <= 6) return 59000;
-    if (sizeKw <= 10) return 56000;
-    return 53000;
+    return 70000; // ₹70,000 per kW - current market rate
   };
 
   // Calculate monthly consumption from bill
@@ -254,6 +251,9 @@ export default function SolarCalculator() {
             <p>• Assumes {PEAK_SUN_HOURS_PER_DAY} peak sun hours/day (conservative Indian average)</p>
             <p>• Uses 90% usable generation (accounts for system losses & soiling)</p>
             <p>• Savings capped to actual consumption - no excess generation sales assumed</p>
+            <p>• Residential rate assumed: ₹{RESIDENTIAL_RATE_PER_KWH}/kWh (2025-26 average DISCOM tariff)</p>
+            <p>• Commercial rate assumed: ₹{COMMERCIAL_RATE_PER_KWH}/kWh (typical commercial tariff, 20-30% premium)</p>
+            <p>• System cost: ₹{getSystemCostPerKw(1)}/kW (current market rate)</p>
             <p>• CO₂ factor: 0.8 kg/kWh (India grid mix, CEA 2025)</p>
             <p>• Rooftop area: {rooftopAreaRequired} sqm based on 6 sqm/kW (industry standard)</p>
           </div>
@@ -262,6 +262,26 @@ export default function SolarCalculator() {
             <Link href="/contact">
               <button className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all">
                 Get Detailed Quote
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Professional Disclaimer Banner */}
+      <div className="mt-12 mx-auto max-w-6xl">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 shadow-sm">
+          <div className="text-center space-y-4">
+            <h3 className="text-xl font-bold text-slate-900">Important Notice</h3>
+            <p className="text-slate-700 leading-relaxed max-w-3xl mx-auto">
+              The savings estimate above is a <span className="font-semibold">preliminary calculation based on average market assumptions</span> and is intended for informational purposes only. This is <span className="font-semibold">not an actual quote</span> for your solar installation.
+            </p>
+            <p className="text-slate-600 leading-relaxed max-w-3xl mx-auto">
+              Actual costs, savings, and system specifications may vary significantly based on your specific location, roof conditions, existing electrical infrastructure, local regulations, and available incentives. For an accurate, binding quote tailored to your property, please <span className="font-semibold">reach out to our team</span>.
+            </p>
+            <Link href="/contact">
+              <button className="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                Request Personalized Quote
               </button>
             </Link>
           </div>
