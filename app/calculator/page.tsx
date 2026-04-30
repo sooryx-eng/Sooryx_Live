@@ -1,230 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { Sun, Zap, Home, Building2, BarChart3, TrendingUp, Calculator, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { Sun, Calculator } from "lucide-react";
 import GlowingHeader from "../components/GlowingHeader";
 import SolarEnergyFlow from "../components/SolarEnergyFlow";
+import SolarCalculator from "../components/SolarCalculator";
 
-// Latest DISCOM Tariffs (2025-26) - Residential Tiered Rates
-const TARIFF_DATA: {
-  [state: string]: {
-    residential: Array<{ slab: string; rate: number; description: string }>;
-    commercial: number;
-  };
-} = {
-  Maharashtra: {
-    residential: [
-      { slab: "0-100 kWh", rate: 3.65, description: "LT Domestic upto 100 units" },
-      { slab: "101-300 kWh", rate: 7.10, description: "LT Domestic 101-300 units" },
-      { slab: "301-500 kWh", rate: 8.95, description: "LT Domestic 301-500 units" },
-      { slab: "500+ kWh", rate: 10.90, description: "LT Domestic above 500 units" },
-    ],
-    commercial: 11.50,
-  },
-  Delhi: {
-    residential: [
-      { slab: "0-200 kWh", rate: 4.85, description: "Normal rate upto 200 units" },
-      { slab: "201-400 kWh", rate: 6.90, description: "Normal rate 201-400 units" },
-      { slab: "401-800 kWh", rate: 8.20, description: "Normal rate 401-800 units" },
-      { slab: "800+ kWh", rate: 9.90, description: "Normal rate above 800 units" },
-    ],
-    commercial: 11.80,
-  },
-  Karnataka: {
-    residential: [
-      { slab: "0-100 kWh", rate: 4.15, description: "Domestic Tariff A up to 100 units" },
-      { slab: "101-300 kWh", rate: 6.60, description: "Domestic Tariff A 101-300 units" },
-      { slab: "301-500 kWh", rate: 7.85, description: "Domestic Tariff A 301-500 units" },
-      { slab: "500+ kWh", rate: 8.90, description: "Domestic Tariff A above 500 units" },
-    ],
-    commercial: 10.50,
-  },
-  "Tamil Nadu": {
-    residential: [
-      { slab: "0-100 kWh", rate: 2.50, description: "Domestic 0-100 consumption" },
-      { slab: "101-200 kWh", rate: 3.50, description: "Domestic 101-200 consumption" },
-      { slab: "201-400 kWh", rate: 5.20, description: "Domestic 201-400 consumption" },
-      { slab: "400+ kWh", rate: 8.50, description: "Domestic above 400 consumption" },
-    ],
-    commercial: 9.50,
-  },
-  "Uttar Pradesh": {
-    residential: [
-      { slab: "0-100 kWh", rate: 4.00, description: "Domestic 0-100 units" },
-      { slab: "101-200 kWh", rate: 5.50, description: "Domestic 101-200 units" },
-      { slab: "201-300 kWh", rate: 6.50, description: "Domestic 201-300 units" },
-      { slab: "300+ kWh", rate: 7.50, description: "Domestic above 300 units" },
-    ],
-    commercial: 9.50,
-  },
-  Gujarat: {
-    residential: [
-      { slab: "0-100 kWh", rate: 3.85, description: "LT Domestic 0-100 units" },
-      { slab: "101-300 kWh", rate: 5.95, description: "LT Domestic 101-300 units" },
-      { slab: "301-500 kWh", rate: 7.60, description: "LT Domestic 301-500 units" },
-      { slab: "500+ kWh", rate: 9.35, description: "LT Domestic above 500 units" },
-    ],
-    commercial: 10.20,
-  },
-  Telangana: {
-    residential: [
-      { slab: "0-100 kWh", rate: 3.45, description: "Domestic 0-100 units" },
-      { slab: "101-200 kWh", rate: 5.25, description: "Domestic 101-200 units" },
-      { slab: "201-400 kWh", rate: 6.95, description: "Domestic 201-400 units" },
-      { slab: "400+ kWh", rate: 8.40, description: "Domestic above 400 units" },
-    ],
-    commercial: 9.80,
-  },
-};
-
-const STATES = Object.keys(TARIFF_DATA);
-
-export default function SolarCalculator() {
-  const [activeTab, setActiveTab] = useState<"savings" | "sizing">("savings");
-  const [userType, setUserType] = useState<"residential" | "commercial">("residential");
-  const [state, setState] = useState("Maharashtra");
-  const [monthlyBill, setMonthlyBill] = useState(5000);
-  const [rooftopArea, setRooftopArea] = useState(100);
-  const [systemSize, setSystemSize] = useState(5);
-
-  const parseSlabRange = (slabLabel: string) => {
-    const plusMatch = slabLabel.match(/(\d+)\+\s*kWh/i);
-    if (plusMatch) {
-      return { from: Number(plusMatch[1]), to: Infinity };
-    }
-
-    const rangeMatch = slabLabel.match(/(\d+)\s*-\s*(\d+)\s*kWh/i);
-    if (rangeMatch) {
-      return { from: Number(rangeMatch[1]), to: Number(rangeMatch[2]) };
-    }
-
-    return { from: 0, to: Infinity };
-  };
-
-  const getResidentialSlabs = (structure: Array<{ slab: string; rate: number; description: string }>) => {
-    return structure
-      .map((item) => ({ ...parseSlabRange(item.slab), rate: item.rate }))
-      .sort((a, b) => a.from - b.from);
-  };
-
-  const calculateMonthlyBillFromConsumption = (
-    consumption: number,
-    tariffStructure: Array<{ slab: string; rate: number; description: string }>,
-    customerType: "residential" | "commercial",
-  ) => {
-    if (customerType === "commercial") {
-      return consumption * TARIFF_DATA[state].commercial;
-    }
-
-    const slabs = getResidentialSlabs(tariffStructure);
-    let totalBill = 0;
-
-    for (const slab of slabs) {
-      const effectiveFrom = slab.from === 0 ? 0 : slab.from;
-      const slabUpperBound = Number.isFinite(slab.to) ? slab.to : consumption;
-      const unitsInSlab = Math.max(0, Math.min(consumption, slabUpperBound) - effectiveFrom);
-
-      if (unitsInSlab > 0) {
-        totalBill += unitsInSlab * slab.rate;
-      }
-    }
-
-    return totalBill;
-  };
-
-  const estimateMonthlyConsumptionFromBill = (
-    bill: number,
-    tariffStructure: Array<{ slab: string; rate: number; description: string }>,
-    customerType: "residential" | "commercial",
-  ) => {
-    if (customerType === "commercial") {
-      return bill / TARIFF_DATA[state].commercial;
-    }
-
-    let low = 0;
-    let high = 5000;
-
-    while (calculateMonthlyBillFromConsumption(high, tariffStructure, customerType) < bill) {
-      high *= 2;
-      if (high > 100000) {
-        break;
-      }
-    }
-
-    for (let i = 0; i < 40; i++) {
-      const mid = (low + high) / 2;
-      const estimatedBill = calculateMonthlyBillFromConsumption(mid, tariffStructure, customerType);
-
-      if (estimatedBill < bill) {
-        low = mid;
-      } else {
-        high = mid;
-      }
-    }
-
-    return (low + high) / 2;
-  };
-
-  // Get tariff data for selected state
-  const tariffStructure =
-    userType === "residential"
-      ? TARIFF_DATA[state].residential
-      : [{ rate: TARIFF_DATA[state].commercial }];
-
-  // Calculations for Savings Tab
-  const monthlyConsumption = Math.round(
-    estimateMonthlyConsumptionFromBill(
-      monthlyBill,
-      TARIFF_DATA[state].residential,
-      userType,
-    ),
-  );
-  const annualConsumption = monthlyConsumption * 12;
-
-  // Solar panel typical metrics
-  const panelCapacity = 400; // Watts
-  const panelArea = 2.2; // Square meters
-  const systemEfficiency = 0.80; // Performance ratio: accounts for inverter, wiring, soiling, temperature losses
-  const peakSunHours = 5.0; // Average peak sun hours in India (varies 4.5-6 by location)
-
-  // Calculate daily and annual generation for given system size
-  const dailyGenerationKwh = systemSize * peakSunHours * systemEfficiency;
-  const annualGenerationKwh = dailyGenerationKwh * 365;
-
-  // Calculate required system size based on consumption
-  const requiredDailyGenerationKwh = annualConsumption / 365;
-  const autoCalculatedSystemSize = requiredDailyGenerationKwh / (peakSunHours * systemEfficiency);
-
-  // Calculate bills and savings
-  const currentAnnualBill = monthlyBill * 12;
-
-  // Net metering utilization: 90% accounts for export credits and self-consumption patterns
-  const offsetConsumptionAnnual = annualGenerationKwh * 0.90;
-  const remainingAnnualConsumptionAfterSolar = Math.max(0, annualConsumption - offsetConsumptionAnnual);
-  const remainingMonthlyConsumptionAfterSolar = remainingAnnualConsumptionAfterSolar / 12;
-
-  // Calculate bill after solar (monthly slab billing, then annualized)
-  const monthlyBillAfterSolar = calculateMonthlyBillFromConsumption(
-    remainingMonthlyConsumptionAfterSolar,
-    TARIFF_DATA[state].residential,
-    userType,
-  );
-  const annualBillAfterSolar = monthlyBillAfterSolar * 12;
-  const annualSavings = Math.max(0, currentAnnualBill - annualBillAfterSolar);
-  const monthlySavings = Math.max(0, annualSavings / 12);
-
-  // System cost and ROI (typical: ₹50,000-60,000 per kW)
-  const systemCost = systemSize * 55000;
-  const roi = systemCost > 0 && annualSavings > 0 ? (annualSavings / systemCost) * 100 : 0;
-  const paybackPeriod = annualSavings > 0 ? systemCost / annualSavings : 0;
-
-  // Calculations for Sizing Tab
-  const panelsNeeded = Math.ceil(systemSize * 1000 / panelCapacity);
-  const areaNeeded = panelsNeeded * panelArea;
-  const canFitOnRooftop = areaNeeded <= rooftopArea;
-
+export default function CalculatorPage() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       {/* Background Gradients */}
@@ -245,9 +28,61 @@ export default function SolarCalculator() {
             Solar Calculator
           </GlowingHeader>
           <p className="mt-4 text-lg text-slate-600">
-            Calculate your Solar Savings & System Size with Accurate DISCOM Tariffs
+            Calculate your solar system size and savings with industry-standard estimates
           </p>
         </motion.div>
+
+        {/* Calculator Component */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-12"
+        >
+          <SolarCalculator />
+        </motion.div>
+
+        {/* Additional Info Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="mt-16 grid md:grid-cols-3 gap-8"
+        >
+          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/50">
+            <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sun className="text-yellow-600" size={32} />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Industry Standards</h3>
+            <p className="text-slate-600 text-sm">
+              Calculations based on 5 peak sun hours/day, ₹55,000/kW system cost, and 25-year system life with degradation.
+            </p>
+          </div>
+
+          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/50">
+            <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Calculator className="text-emerald-600" size={32} />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Accurate Estimates</h3>
+            <p className="text-slate-600 text-sm">
+              Conservative calculations include panel degradation, maintenance costs, and realistic performance ratios.
+            </p>
+          </div>
+
+          <div className="text-center p-6 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/50">
+            <div className="bg-sky-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sun className="text-sky-600" size={32} />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Get Started</h3>
+            <p className="text-slate-600 text-sm">
+              Ready to go solar? Contact us for a detailed site assessment and personalized solar solution.
+            </p>
+          </div>
+        </motion.div>
+      </section>
+    </div>
+  );
+}
       </section>
 
       {/* Tab Navigation */}
