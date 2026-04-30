@@ -2,11 +2,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Sun, Calculator, TrendingUp, Zap, Home, Building2 } from "lucide-react";
+import { Sun, Calculator, TrendingUp, Zap, Home, Building2, Info } from "lucide-react";
 
 export default function SolarCalculator() {
   const [monthlyBill, setMonthlyBill] = useState<number>(5000);
   const [customerType, setCustomerType] = useState<"residential" | "commercial">("residential");
+  const [showAssumptions, setShowAssumptions] = useState<boolean>(false);
 
   // Industry-standard constants for India
   // Electricity rates (as per 2025-26 average across major DISCOMs)
@@ -194,10 +195,41 @@ export default function SolarCalculator() {
 
         {/* Results Section */}
         <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
-          <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-slate-900">
-            <Calculator className="text-emerald-600" size={20} />
-            Your Solar System
-          </h4>
+          <div className="relative inline-block mb-4">
+            <div className="flex items-center gap-2">
+              <h4 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <Calculator className="text-emerald-600" size={20} />
+                Your Solar System
+              </h4>
+              <button
+                onMouseEnter={() => setShowAssumptions(true)}
+                onMouseLeave={() => setShowAssumptions(false)}
+                className="text-slate-400 hover:text-slate-600 transition"
+                aria-label="View calculation assumptions"
+              >
+                <Info size={18} />
+              </button>
+            </div>
+
+            {/* Tooltip - visible on hover */}
+            {showAssumptions && (
+              <div className="absolute top-full left-0 mt-2 bg-white border border-slate-300 rounded-lg p-4 shadow-lg z-50 w-96 max-h-96 overflow-y-auto">
+                <p className="font-semibold text-slate-900 mb-3 text-sm">Calculation Assumptions</p>
+                <div className="text-xs text-slate-700 space-y-2">
+                  <p>• Peak sun hours: {PEAK_SUN_HOURS_PER_DAY} hours/day (conservative Indian average)</p>
+                  <p>• System losses & soiling: 10% reduction applied to generation</p>
+                  <p>• Savings cap: Limited to actual consumption (no excess export assumed)</p>
+                  <p>• <span className="font-semibold">Residential rate:</span> ₹{RESIDENTIAL_RATE_PER_KWH}/kWh (2025-26 DISCOM average)</p>
+                  <p>• <span className="font-semibold">Commercial rate:</span> ₹{COMMERCIAL_RATE_PER_KWH}/kWh (20-30% commercial premium)</p>
+                  <p>• <span className="font-semibold">System cost:</span> ₹{getSystemCostPerKw(1)}/kW (current market rate)</p>
+                  <p>• CO₂ factor: 0.8 kg/kWh (India grid mix, CEA 2025)</p>
+                  <p>• Rooftop area: 6 sqm/kW (industry standard with spacing)</p>
+                  <p>• Panel lifespan: {SYSTEM_LIFETIME_YEARS} years (standard warranty period)</p>
+                  <p>• Annual degradation: {DEGRADATION_RATE * 100}% per year</p>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -246,30 +278,11 @@ export default function SolarCalculator() {
               />
             </div>
           </div>
-
-          <div className="mt-4 text-xs text-slate-600 space-y-1">
-            <p>• Assumes {PEAK_SUN_HOURS_PER_DAY} peak sun hours/day (conservative Indian average)</p>
-            <p>• Uses 90% usable generation (accounts for system losses & soiling)</p>
-            <p>• Savings capped to actual consumption - no excess generation sales assumed</p>
-            <p>• Residential rate assumed: ₹{RESIDENTIAL_RATE_PER_KWH}/kWh (2025-26 average DISCOM tariff)</p>
-            <p>• Commercial rate assumed: ₹{COMMERCIAL_RATE_PER_KWH}/kWh (typical commercial tariff, 20-30% premium)</p>
-            <p>• System cost: ₹{getSystemCostPerKw(1)}/kW (current market rate)</p>
-            <p>• CO₂ factor: 0.8 kg/kWh (India grid mix, CEA 2025)</p>
-            <p>• Rooftop area: {rooftopAreaRequired} sqm based on 6 sqm/kW (industry standard)</p>
-          </div>
-
-          <div className="mt-6">
-            <Link href="/contact">
-              <button className="w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-semibold rounded-lg hover:from-emerald-600 hover:to-sky-600 transition-all">
-                Get Detailed Quote
-              </button>
-            </Link>
-          </div>
         </div>
       </div>
 
       {/* Professional Disclaimer Banner */}
-      <div className="mt-12 mx-auto max-w-6xl">
+      <div className="mt-8 mx-auto max-w-6xl">
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 shadow-sm">
           <div className="text-center space-y-4">
             <h3 className="text-xl font-bold text-slate-900">Important Notice</h3>
