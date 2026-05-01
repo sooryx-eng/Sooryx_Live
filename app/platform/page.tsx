@@ -121,22 +121,22 @@ export default function Platform() {
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             className="relative z-10 space-y-4"
           >
-            <div className="rounded-2xl border border-amber-300/40 bg-gradient-to-br from-amber-100/70 via-yellow-100/50 to-amber-50/60 p-6 backdrop-blur-sm">
-              <p className="text-sm uppercase tracking-[0.15em] text-amber-700 font-semibold">Installed</p>
-              <p className="text-3xl font-bold text-amber-900 mt-2">50,000+</p>
-              <p className="text-xs text-amber-700 mt-1">Solar Systems</p>
+            <div className="rounded-2xl border-2 border-amber-500 bg-gradient-to-br from-amber-500/90 via-yellow-500/80 to-orange-500/70 p-6 backdrop-blur-sm shadow-lg">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/90 font-bold">✓ Eco-Friendly</p>
+              <p className="text-2xl font-bold text-white mt-3">Zero Emissions</p>
+              <p className="text-sm text-white/85 mt-2 font-medium">100% clean renewable energy</p>
             </div>
             
-            <div className="rounded-2xl border border-emerald-300/40 bg-gradient-to-br from-emerald-100/70 via-green-100/50 to-emerald-50/60 p-6 backdrop-blur-sm">
-              <p className="text-sm uppercase tracking-[0.15em] text-emerald-700 font-semibold">Saving</p>
-              <p className="text-3xl font-bold text-emerald-900 mt-2">₹500Cr+</p>
-              <p className="text-xs text-emerald-700 mt-1">Customer Bills Reduced</p>
+            <div className="rounded-2xl border-2 border-emerald-500 bg-gradient-to-br from-emerald-500/90 via-green-500/80 to-teal-500/70 p-6 backdrop-blur-sm shadow-lg">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/90 font-bold">⚡ Expert Support</p>
+              <p className="text-2xl font-bold text-white mt-3">24/7 Available</p>
+              <p className="text-sm text-white/85 mt-2 font-medium">Certified technician assistance</p>
             </div>
             
-            <div className="rounded-2xl border border-blue-300/40 bg-gradient-to-br from-blue-100/70 via-cyan-100/50 to-blue-50/60 p-6 backdrop-blur-sm">
-              <p className="text-sm uppercase tracking-[0.15em] text-blue-700 font-semibold">Guarantee</p>
-              <p className="text-3xl font-bold text-blue-900 mt-2">25 Years</p>
-              <p className="text-xs text-blue-700 mt-1">Equipment Warranty</p>
+            <div className="rounded-2xl border-2 border-blue-500 bg-gradient-to-br from-blue-500/90 via-cyan-500/80 to-sky-500/70 p-6 backdrop-blur-sm shadow-lg">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/90 font-bold">✓ Durability</p>
+              <p className="text-2xl font-bold text-white mt-3">25+ Years</p>
+              <p className="text-sm text-white/85 mt-2 font-medium">Industry-leading warranty</p>
             </div>
           </motion.div>
         </div>
