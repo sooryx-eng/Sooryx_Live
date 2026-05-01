@@ -136,62 +136,7 @@ export default function HowItWorks() {
         </motion.div>
       </section>
 
-      {/* Financing Section */}
-      <section className="relative mx-auto max-w-7xl border-t border-slate-200/70 px-6 py-16 md:px-10 md:py-24">
-        <SolarLineArt3 className="top-12 right-16 hidden xl:block" />
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-purple-200/70 bg-purple-50 px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] text-purple-700">
-            <CreditCard size={13} /> Financing
-          </div>
-          <GlowingHeader as="h2" className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
-            Solar Financing Options
-          </GlowingHeader>
-          <p className="mt-4 max-w-3xl text-lg text-slate-600">
-            Choose the payment model that works best for your budget and goals.
-          </p>
-        </motion.div>
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <FinancingCard
-            title="Self-Financing"
-            icon={<Smartphone size={24} />}
-            description="Buy the system outright and own 100% of the energy it produces."
-            benefits={["100% energy ownership", "Maximum long-term savings", "Requires upfront capital"]}
-            color="amber"
-          />
-
-          <FinancingCard
-            title="Bank Loans"
-            icon={<CreditCard size={24} />}
-            description="Financing through our partner banks and NBFCs with competitive rates."
-            benefits={["Minimal downpayment", "Flexible EMI options"]}
-            color="emerald"
-          />
-
-          <FinancingCard
-            title="PPA Model"
-            icon={<TrendingUp size={24} />}
-            description="Pay-per-use model. We install, maintain, and you pay for energy usage."
-            benefits={["Zero installation cost", "Guaranteed bill reduction", "15-year guarantee"]}
-            color="blue"
-          />
-
-          <FinancingCard
-            title="Leasing"
-            icon={<Users size={24} />}
-            description="Monthly lease payments with all maintenance included."
-            benefits={["Predictable costs", "No maintenance worries", "Flexible terms available"]}
-            color="purple"
-          />
-        </div>
-      </section>
-
-      {/* Solar Credits Section */}
+      {/* Solar Credits Section */
       <section className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -441,74 +386,6 @@ function CommercialStep({ step, title, description }: { step: number; title: str
       </motion.div>
       <h4 className="text-lg font-semibold text-slate-900">{title}</h4>
       <p className="mt-2 text-slate-600">{description}</p>
-    </motion.div>
-  );
-}
-
-function FinancingCard({
-  title,
-  icon,
-  description,
-  benefits,
-  color,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  description: string;
-  benefits: string[];
-  color: "amber" | "emerald" | "blue" | "purple";
-}) {
-  const colorMap = {
-    amber: {
-      bg: "bg-amber-100",
-      text: "text-amber-600",
-      border: "border-amber-200/70",
-      hover: "hover:border-amber-300/70 hover:shadow-[0_12px_30px_rgba(251,191,36,0.16)]",
-    },
-    emerald: {
-      bg: "bg-emerald-100",
-      text: "text-emerald-600",
-      border: "border-emerald-200/70",
-      hover: "hover:border-emerald-300/70 hover:shadow-[0_12px_30px_rgba(16,185,129,0.16)]",
-    },
-    blue: {
-      bg: "bg-blue-100",
-      text: "text-blue-600",
-      border: "border-blue-200/70",
-      hover: "hover:border-blue-300/70 hover:shadow-[0_12px_30px_rgba(59,130,246,0.16)]",
-    },
-    purple: {
-      bg: "bg-purple-100",
-      text: "text-purple-600",
-      border: "border-purple-200/70",
-      hover: "hover:border-purple-300/70 hover:shadow-[0_12px_30px_rgba(168,85,247,0.16)]",
-    },
-  };
-
-  const colors = colorMap[color];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className={`group rounded-2xl border ${colors.border} bg-white/90 p-6 backdrop-blur transition duration-300 hover:-translate-y-1 ${colors.hover}`}
-    >
-      <div className={`mb-4 inline-flex rounded-xl ${colors.bg} p-3 ${colors.text}`}>
-        {icon}
-      </div>
-      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-      <p className="mt-3 text-sm text-slate-600">{description}</p>
-
-      <div className="mt-5 space-y-2 border-t border-slate-200/70 pt-5">
-        {benefits.map((benefit) => (
-          <div key={benefit} className="flex gap-2 text-xs text-slate-600">
-            <span className={`mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full ${colors.text}`} />
-            {benefit}
-          </div>
-        ))}
-      </div>
     </motion.div>
   );
 }
