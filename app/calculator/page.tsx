@@ -55,7 +55,7 @@ export default function CalculatorPage() {
             </div>
             <h3 className="text-xl font-semibold mb-2">Industry Standards</h3>
             <p className="text-slate-600 text-sm">
-              Calculations based on 5 peak sun hours/day, ₹55,000/kW system cost, and 25-year system life with degradation.
+              Calculations based on 5 peak sun hours/day and 25-year system life with degradation.
             </p>
           </div>
 

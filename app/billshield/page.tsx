@@ -21,7 +21,7 @@ export default function BillShield() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="sticky top-0 z-40 w-full bg-gradient-to-r from-amber-500 via-yellow-500 to-emerald-500 px-4 py-5 text-center shadow-lg"
+        className="sticky top-28 md:top-0 z-40 w-full bg-gradient-to-r from-amber-500 via-yellow-500 to-emerald-500 px-4 py-5 text-center shadow-lg"
       >
         <h2 className="text-2xl md:text-3xl font-black text-white drop-shadow-lg">
           ☀️ Coming Soon
