@@ -69,20 +69,30 @@ export default function Platform() {
       />
 
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(251,191,36,0.28),transparent_38%),radial-gradient(circle_at_85%_15%,rgba(16,185,129,0.22),transparent_38%),radial-gradient(circle_at_50%_90%,rgba(56,189,248,0.18),transparent_40%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.55),rgba(255,255,255,0.92))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(251,191,36,0.35),transparent_35%),radial-gradient(circle_at_85%_15%,rgba(16,185,129,0.28),transparent_35%),radial-gradient(circle_at_50%_90%,rgba(56,189,248,0.22),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(251,191,36,0.08)_0%,rgba(16,185,129,0.05)_25%,rgba(56,189,248,0.06)_50%,rgba(139,92,246,0.05)_75%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.4),rgba(255,255,255,0.88))]" />
+      </div>
+
+      {/* Decorative elements for hero section */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-emerald-300/15 to-cyan-300/10 rounded-full blur-3xl -mr-48 -mt-48" />
+        <div className="absolute top-40 left-1/4 w-80 h-80 bg-gradient-to-br from-amber-300/12 to-yellow-200/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-1/3 w-96 h-96 bg-gradient-to-tl from-purple-300/10 to-pink-200/8 rounded-full blur-3xl" />
       </div>
 
       <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-24 md:px-10 md:pt-28">
-        <div className="pointer-events-none absolute -top-16 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,rgba(251,191,36,0.12),rgba(16,185,129,0.1),rgba(251,191,36,0.12))] blur-2xl" />
+        <div className="pointer-events-none absolute -top-16 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,rgba(251,191,36,0.18),rgba(16,185,129,0.15),rgba(56,189,248,0.12),rgba(251,191,36,0.18))] blur-3xl" />
+        <div className="pointer-events-none absolute top-32 right-10 h-96 w-96 rounded-full bg-gradient-to-bl from-emerald-400/12 to-emerald-200/6 blur-3xl hidden lg:block" />
+        <div className="pointer-events-none absolute top-1/3 -left-20 h-80 w-80 rounded-full bg-gradient-to-tr from-amber-400/10 to-yellow-200/6 blur-3xl hidden lg:block" />
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
-          className="max-w-5xl"
+          className="max-w-5xl relative z-10"
         >
           <motion.div
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/80 px-4 py-2 text-xs uppercase tracking-[0.2em] text-slate-500 backdrop-blur"
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-gradient-to-r from-amber-100/90 to-yellow-100/70 px-4 py-2 text-xs uppercase tracking-[0.2em] text-amber-700 font-medium backdrop-blur-sm"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.6 }}
@@ -91,7 +101,7 @@ export default function Platform() {
           </motion.div>
 
           <GlowingHeader as="h1" className="text-5xl font-semibold leading-[1.02] tracking-tight text-slate-900 md:text-7xl">
-            Solar Power - Your Way
+            Solar Power - <span className="bg-gradient-to-r from-amber-600 via-emerald-600 to-blue-600 bg-clip-text text-transparent">Your Way</span>
           </GlowingHeader>
 
           <p className="mt-8 max-w-4xl text-lg leading-relaxed text-slate-600 md:text-2xl">
@@ -103,23 +113,24 @@ export default function Platform() {
           initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, delay: 0.25 }}
-          className="mt-14 grid gap-4 md:grid-cols-3"
+          className="mt-14 grid gap-4 md:grid-cols-3 relative z-10"
         >
-          <InfoChip title="Homes & Apartments" value="Flexible ownership options" />
-          <InfoChip title="Societies & Communities" value="Common area savings" />
-          <InfoChip title="Businesses & Factories" value="Predictable energy spend" />
+          <InfoChip index={0} title="Homes & Apartments" value="Flexible ownership options" />
+          <InfoChip index={1} title="Societies & Communities" value="Common area savings" />
+          <InfoChip index={2} title="Businesses & Factories" value="Predictable energy spend" />
         </motion.div>
 
-        <div className="relative mt-10 overflow-hidden rounded-2xl border border-slate-200/70 bg-white/80 py-3">
+        <div className="relative mt-10 overflow-hidden rounded-2xl border border-slate-200/70 bg-gradient-to-r from-white/85 via-amber-50/50 to-white/85 py-3 backdrop-blur">
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-400/5 via-emerald-400/5 to-blue-400/5 rounded-2xl" />
           <motion.div
-            className="flex w-max gap-3 px-4"
+            className="flex w-max gap-3 px-4 relative z-10"
             animate={{ x: [0, -520] }}
             transition={{ duration: 18, ease: "linear", repeat: Infinity }}
           >
             {[...movingStats, ...movingStats].map((item, index) => (
               <div
                 key={`${item}-${index}`}
-                className="rounded-full border border-slate-200/70 bg-white px-4 py-2 text-xs uppercase tracking-[0.13em] text-slate-600"
+                className="rounded-full border border-gradient-to-r from-amber-300/40 to-emerald-300/40 bg-gradient-to-r from-white/95 to-amber-100/50 px-5 py-2 text-xs uppercase tracking-[0.13em] text-slate-700 font-medium whitespace-nowrap shadow-sm hover:shadow-md transition"
               >
                 {item}
               </div>
@@ -362,16 +373,44 @@ export default function Platform() {
   );
 }
 
-function InfoChip({ title, value }: { title: string; value: string }) {
+function InfoChip({ index, title, value }: { index: number; title: string; value: string }) {
+  const variants = [
+    {
+      bg: "bg-gradient-to-br from-amber-100/80 via-yellow-100/60 to-amber-50/70",
+      border: "border-amber-300/50",
+      label: "text-amber-700",
+      text: "text-amber-900",
+      accent: "bg-gradient-to-r from-amber-400/20 to-yellow-300/15"
+    },
+    {
+      bg: "bg-gradient-to-br from-emerald-100/80 via-green-100/60 to-emerald-50/70",
+      border: "border-emerald-300/50",
+      label: "text-emerald-700",
+      text: "text-emerald-900",
+      accent: "bg-gradient-to-r from-emerald-400/20 to-green-300/15"
+    },
+    {
+      bg: "bg-gradient-to-br from-blue-100/80 via-cyan-100/60 to-blue-50/70",
+      border: "border-blue-300/50",
+      label: "text-blue-700",
+      text: "text-blue-900",
+      accent: "bg-gradient-to-r from-blue-400/20 to-cyan-300/15"
+    }
+  ];
+
+  const variant = variants[index % variants.length];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45 }}
-      className="rounded-2xl border border-slate-200/70 bg-white/80 p-5 backdrop-blur"
+      className={`rounded-2xl border ${variant.border} ${variant.bg} p-6 backdrop-blur-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-amber-500/10`}
     >
-      <p className="text-xs uppercase tracking-[0.15em] text-slate-500">{title}</p>
-      <p className="mt-2 text-lg font-semibold text-slate-900">{value}</p>
+      <div className={`inline-block px-3 py-1 rounded-lg ${variant.accent} mb-3`}>
+        <p className={`text-xs uppercase tracking-[0.15em] font-medium ${variant.label}`}>{title}</p>
+      </div>
+      <p className={`text-lg font-semibold ${variant.text}`}>{value}</p>
     </motion.div>
   );
 }

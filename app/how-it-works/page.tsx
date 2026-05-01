@@ -136,7 +136,7 @@ export default function HowItWorks() {
         </motion.div>
       </section>
 
-      {/* Solar Credits Section */
+      {/* Solar Credits Section */}
       <section className="mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
