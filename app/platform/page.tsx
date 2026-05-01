@@ -701,7 +701,7 @@ function SolarFlow() {
         className="mt-12 border-t border-slate-200/70 pt-8"
       >
         <p className="text-center text-sm text-slate-600">
-          <span className="font-semibold text-slate-900">Zero upfront costs.</span> No installation. No installation risk. No maintenance fees.
+          <span className="font-semibold text-slate-900">Zero upfront costs.</span> No maintenance fees.
           Just lower bills from clean solar energy.
         </p>
       </motion.div>
