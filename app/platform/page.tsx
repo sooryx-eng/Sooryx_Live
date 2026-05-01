@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Building2, CheckCircle2, CreditCard, Factory, Home, Smartphone, Sparkles, SunMedium, Zap, TrendingUp, Lightbulb, Users } from "lucide-react";
+import Link from "next/link";
 import GlowingHeader from "../components/GlowingHeader";
 import SolarLineArt from "../components/SolarLineArt";
 import SolarLineArt2 from "../components/SolarLineArt2";
@@ -111,6 +112,47 @@ export default function Platform() {
               <p className="mt-8 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">
                 Solar installations for homes, societies, businesses, and factories. Own the power you generate and reduce your electricity costs.
               </p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.6 }}
+                className="mt-10 inline-block"
+              >
+                <Link href="/contact">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative px-8 py-4 rounded-full font-bold text-lg text-white overflow-hidden shadow-2xl transition-all duration-300"
+                  >
+                    {/* Vibrant gradient background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-yellow-400 to-orange-500 rounded-full" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-green-400 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
+                    
+                    {/* Animated glow on hover */}
+                    <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-lg bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400 -z-10 scale-150" />
+                    <div className="absolute -inset-0.5 rounded-full opacity-0 group-hover:opacity-75 transition-opacity duration-300 bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 blur-xl animate-pulse -z-10" />
+                    
+                    {/* Content wrapper */}
+                    <div className="relative flex items-center justify-center gap-3">
+                      <span className="text-2xl group-hover:animate-bounce">☀️</span>
+                      <span>Let's Go Solar</span>
+                      <motion.span 
+                        className="text-xl"
+                        animate={{ x: [0, 4, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        →
+                      </motion.span>
+                    </div>
+
+                    {/* Shine effect on hover */}
+                    <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-40 transition-opacity duration-300">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white to-transparent animate-pulse" />
+                    </div>
+                  </motion.button>
+                </Link>
+              </motion.div>
             </motion.div>
           </div>
 
