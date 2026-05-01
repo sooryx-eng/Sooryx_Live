@@ -81,33 +81,65 @@ export default function Platform() {
         <div className="absolute bottom-20 right-1/3 w-96 h-96 bg-gradient-to-tl from-purple-300/10 to-pink-200/8 rounded-full blur-3xl" />
       </div>
 
-      <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-24 md:px-10 md:pt-28">
+      <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-40 md:px-10 md:pt-28">
         <div className="pointer-events-none absolute -top-16 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,rgba(251,191,36,0.18),rgba(16,185,129,0.15),rgba(56,189,248,0.12),rgba(251,191,36,0.18))] blur-3xl" />
         <div className="pointer-events-none absolute top-32 right-10 h-96 w-96 rounded-full bg-gradient-to-bl from-emerald-400/12 to-emerald-200/6 blur-3xl hidden lg:block" />
         <div className="pointer-events-none absolute top-1/3 -left-20 h-80 w-80 rounded-full bg-gradient-to-tr from-amber-400/10 to-yellow-200/6 blur-3xl hidden lg:block" />
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
-          className="max-w-5xl relative z-10"
-        >
+        
+        <div className="grid md:grid-cols-3 gap-8 items-start">
+          {/* Left side - Main content */}
+          <div className="md:col-span-2">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
+              className="max-w-4xl relative z-10"
+            >
+              <motion.div
+                className="mb-8 inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-gradient-to-r from-amber-100/90 to-yellow-100/70 px-4 py-2 text-xs uppercase tracking-[0.2em] text-amber-700 font-medium backdrop-blur-sm"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.6 }}
+              >
+                <Sparkles size={14} className="text-amber-500" /> sooryx platform
+              </motion.div>
+
+              <GlowingHeader as="h1" className="text-5xl font-semibold leading-[1.02] tracking-tight text-slate-900 md:text-6xl">
+                Solar Power - <span className="bg-gradient-to-r from-amber-600 via-emerald-600 to-blue-600 bg-clip-text text-transparent">Your Way</span>
+              </GlowingHeader>
+
+              <p className="mt-8 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">
+                Solar installations for homes, societies, businesses, and factories. Own the power you generate and reduce your electricity costs.
+              </p>
+            </motion.div>
+          </div>
+
+          {/* Right side - Trust stats */}
           <motion.div
-            className="mb-8 inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-gradient-to-r from-amber-100/90 to-yellow-100/70 px-4 py-2 text-xs uppercase tracking-[0.2em] text-amber-700 font-medium backdrop-blur-sm"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.6 }}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            className="relative z-10 space-y-4"
           >
-            <Sparkles size={14} className="text-amber-500" /> sooryx platform
+            <div className="rounded-2xl border border-amber-300/40 bg-gradient-to-br from-amber-100/70 via-yellow-100/50 to-amber-50/60 p-6 backdrop-blur-sm">
+              <p className="text-sm uppercase tracking-[0.15em] text-amber-700 font-semibold">Installed</p>
+              <p className="text-3xl font-bold text-amber-900 mt-2">50,000+</p>
+              <p className="text-xs text-amber-700 mt-1">Solar Systems</p>
+            </div>
+            
+            <div className="rounded-2xl border border-emerald-300/40 bg-gradient-to-br from-emerald-100/70 via-green-100/50 to-emerald-50/60 p-6 backdrop-blur-sm">
+              <p className="text-sm uppercase tracking-[0.15em] text-emerald-700 font-semibold">Saving</p>
+              <p className="text-3xl font-bold text-emerald-900 mt-2">₹500Cr+</p>
+              <p className="text-xs text-emerald-700 mt-1">Customer Bills Reduced</p>
+            </div>
+            
+            <div className="rounded-2xl border border-blue-300/40 bg-gradient-to-br from-blue-100/70 via-cyan-100/50 to-blue-50/60 p-6 backdrop-blur-sm">
+              <p className="text-sm uppercase tracking-[0.15em] text-blue-700 font-semibold">Guarantee</p>
+              <p className="text-3xl font-bold text-blue-900 mt-2">25 Years</p>
+              <p className="text-xs text-blue-700 mt-1">Equipment Warranty</p>
+            </div>
           </motion.div>
-
-          <GlowingHeader as="h1" className="text-5xl font-semibold leading-[1.02] tracking-tight text-slate-900 md:text-7xl">
-            Solar Power - <span className="bg-gradient-to-r from-amber-600 via-emerald-600 to-blue-600 bg-clip-text text-transparent">Your Way</span>
-          </GlowingHeader>
-
-          <p className="mt-8 max-w-4xl text-lg leading-relaxed text-slate-600 md:text-2xl">
-            Solar installations for homes, societies, businesses, and factories. Own the power you generate and reduce your electricity costs.
-          </p>
-        </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 26 }}

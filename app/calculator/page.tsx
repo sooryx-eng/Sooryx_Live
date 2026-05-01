@@ -17,7 +17,7 @@ export default function CalculatorPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative mx-auto max-w-7xl px-6 pb-12 pt-28 md:px-10 md:pt-32">
+      <section className="relative mx-auto max-w-7xl px-6 pb-12 pt-40 md:px-10 md:pt-32">
         <SolarEnergyFlow className="top-16 right-20 hidden lg:block" />
         <motion.div
           initial={{ opacity: 0, y: 40 }}

@@ -32,7 +32,7 @@ export default function BillShield() {
       </motion.div>
 
       {/* Hero Section */}
-      <section className="relative mx-auto max-w-7xl px-6 pb-16 pt-28 md:px-10 md:pt-40">
+      <section className="relative mx-auto max-w-7xl px-6 pb-16 pt-44 md:px-10 md:pt-40">
         <SolarLineArt3 className="top-20 right-12 hidden xl:block" />
 
         <motion.div

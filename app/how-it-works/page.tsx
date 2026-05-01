@@ -19,7 +19,7 @@ export default function HowItWorks() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-24 md:px-10 md:pt-32">
+      <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-40 md:px-10 md:pt-32">
         <div className="pointer-events-none absolute -top-16 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,rgba(251,191,36,0.12),rgba(16,185,129,0.1),rgba(251,191,36,0.12))] blur-2xl" />
         
         <SolarLineArt className="top-24 right-8 hidden lg:block" />
