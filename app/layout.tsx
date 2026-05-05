@@ -4,6 +4,11 @@ import Image from "next/image";
 import FloatingStartButton from "./components/FloatingStartButton";
 import Footer from "./components/Footer";
 import GlobalNavbar from "./components/GlobalNavbar";
+import PageTitleSetter from "./components/PageTitleSetter";
+
+export const metadata = {
+  title: "Sooryx",
+};
 
 export default function RootLayout({
   children,
@@ -22,6 +27,7 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-slate-950 text-white pt-32 md:pt-20">
+        <PageTitleSetter />
         {/* GLOBAL NAVBAR */}
         <GlobalNavbar />
 
