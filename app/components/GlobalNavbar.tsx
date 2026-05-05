@@ -50,7 +50,7 @@ export default function GlobalNavbar() {
 
   return (
     <nav
-      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/95 backdrop-blur transition-transform duration-300 ease-out md:duration-0 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl shadow-[0_28px_90px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-out md:duration-0 ${
         isHidden ? "-translate-y-full" : "translate-y-0"
       } md:translate-y-0`}
     >
@@ -72,20 +72,8 @@ export default function GlobalNavbar() {
         <div className="hidden flex-1 flex-wrap items-center justify-end gap-2 text-xs md:flex lg:gap-3 lg:text-sm">
           <Link
             href="/billshield"
-            style={{
-              cursor: "pointer",
-              background: "linear-gradient(135deg, #fbbf24, #facc15, #10b981)",
-              padding: "10px 24px",
-              borderRadius: "999px",
-              fontWeight: 700,
-              color: "#020617",
-              boxShadow: "0 6px 18px 0 rgba(251, 191, 36, 0.35)",
-              transition: "all 0.25s ease",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
-            className="hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(251,191,36,0.45)] active:translate-y-0 active:scale-[0.98]"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-emerald-400 px-6 py-2 text-sm font-semibold text-slate-950 shadow-[0_12px_32px_rgba(251,191,36,0.28)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(251,191,36,0.42)] active:translate-y-0 active:scale-[0.98]"
+            style={{ cursor: "pointer" }}
           >
             BillShield
           </Link>

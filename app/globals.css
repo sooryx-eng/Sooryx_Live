@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #060a14;
+  --foreground: #f8fafc;
+  --surface: rgba(16, 24, 40, 0.78);
+  --surface-soft: rgba(15, 23, 42, 0.58);
+  --surface-strong: rgba(15, 23, 42, 0.92);
+  --accent: #fbbf24;
+  --accent-soft: rgba(251, 191, 36, 0.18);
+  --border: rgba(255, 255, 255, 0.12);
+  --shadow: 0 40px 90px rgba(1, 9, 23, 0.32);
 }
 
 @theme inline {
@@ -14,15 +21,125 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #05080f;
+    --foreground: #f8fafc;
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
+  min-height: 100vh;
+  margin: 0;
+  background: radial-gradient(circle at 15% 12%, rgba(251, 191, 36, 0.14), transparent 20%),
+    radial-gradient(circle at 85% 8%, rgba(16, 185, 129, 0.16), transparent 18%),
+    linear-gradient(180deg, #070c19 0%, #040611 48%, #02040a 100%);
   color: var(--foreground);
   font-family: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.04), transparent 26%),
+    radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.03), transparent 22%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 45%, rgba(255, 255, 255, 0.02) 100%);
+  opacity: 0.8;
+  z-index: -1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(251, 191, 36, 0.3);
+  color: #ffffff;
+}
+
+button,
+a {
+  transition: all 180ms ease;
+}
+
+a:hover,
+button:hover {
+  text-decoration: none;
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(22px);
+}
+
+.glass-panel-soft {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 28px 64px rgba(1, 9, 23, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.luxe-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.luxe-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(16, 185, 129, 0.2), rgba(56, 189, 248, 0.18));
+}
+
+.card-highlight {
+  position: relative;
+}
+
+.card-highlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 32%);
+  pointer-events: none;
+}
+
+.shadow-soft {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+@supports (backdrop-filter: blur(0)) {
+  .glass-panel,
+  .glass-panel-soft {
+    background: rgba(15, 23, 42, 0.5);
+  }
 }
 
 .auth-shell {
