@@ -107,7 +107,9 @@ export default function Footer() {
             {/* Social Links */}
             <div className="mt-6 flex gap-3">
               <a
-                href="#"
+                href="https://www.linkedin.com/company/sooryx"
+                target="_blank"
+                rel="noreferrer"
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-300 transition hover:border-amber-300 hover:bg-amber-50/10 hover:text-amber-300"
                 aria-label="LinkedIn"
               >
