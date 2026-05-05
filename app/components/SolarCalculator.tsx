@@ -83,12 +83,33 @@ export default function SolarCalculator() {
   const totalMaintenanceCost = annualMaintenanceCost * SYSTEM_LIFETIME_YEARS;
   const lifetimeNetBenefit = totalLifetimeSavings - totalMaintenanceCost - systemCost;
 
-  // Payback period calculation
-  const firstYearSavings = calculateAnnualSavings(1);
-  const paybackYears = firstYearSavings > annualMaintenanceCost ? systemCost / (firstYearSavings - annualMaintenanceCost) : 0;
+  // Payback period calculation using cumulative annual net savings.
+  // This is more accurate than dividing total cost by first-year savings alone,
+  // because the system generates slightly less each year due to degradation.
+  const calculatePaybackYears = () => {
+    let cumulativeCashflow = -systemCost;
+    let lastCumulative = cumulativeCashflow;
+
+    for (let year = 1; year <= SYSTEM_LIFETIME_YEARS + 5; year++) {
+      const annualSavings = calculateAnnualSavings(year);
+      const annualNet = annualSavings - annualMaintenanceCost;
+      cumulativeCashflow += annualNet;
+
+      if (cumulativeCashflow >= 0) {
+        const partialYear = annualNet > 0 ? (Math.abs(lastCumulative) / annualNet) : 0;
+        return Number((year - 1 + partialYear).toFixed(1));
+      }
+
+      lastCumulative = cumulativeCashflow;
+    }
+
+    return 0;
+  };
+
+  const paybackYears = calculatePaybackYears();
 
   // Monthly savings (first year average)
-  const monthlySavings = Math.round(firstYearSavings / 12);
+  const monthlySavings = Math.round(calculateAnnualSavings(1) / 12);
 
   // Carbon savings (India grid mix: 0.8 kg CO2/kWh avoided)
   // Source: Central Electricity Authority, IEA India Carbon Intensity Data
@@ -148,18 +169,18 @@ export default function SolarCalculator() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-xs text-slate-600">₹1,000</span>
                 <span className="text-xl font-bold text-emerald-600">₹{monthlyBill.toLocaleString()}</span>
-                <span className="text-xs text-slate-600">₹50,000</span>
+                <span className="text-xs text-slate-600">₹1,00,000</span>
               </div>
               <input
                 type="range"
                 min={1000}
-                max={50000}
+                max={100000}
                 step={500}
                 value={monthlyBill}
                 onChange={(e) => setMonthlyBill(Number(e.target.value))}
                 className="w-full h-2 bg-gradient-to-r from-blue-500 to-emerald-400 rounded-lg appearance-none cursor-pointer accent-emerald-400"
                 style={{
-                  background: `linear-gradient(to right, #3b82f6 0%, #10b981 ${((monthlyBill - 1000) / (50000 - 1000)) * 100}%, #1e293b ${((monthlyBill - 1000) / (50000 - 1000)) * 100}%, #1e293b 100%)`
+                  background: `linear-gradient(to right, #3b82f6 0%, #10b981 ${((monthlyBill - 1000) / (100000 - 1000)) * 100}%, #1e293b ${((monthlyBill - 1000) / (100000 - 1000)) * 100}%, #1e293b 100%)`
                 }}
               />
               <p className="text-xs text-slate-500 mt-2">Drag to adjust your average monthly bill</p>
