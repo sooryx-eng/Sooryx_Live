@@ -36,7 +36,7 @@ export default function FloatingStartButton() {
         onMouseLeave={() => setIsHovered(false)}
         style={{
           position: "fixed",
-          bottom: isTouchDevice ? "20px" : "32px",
+          bottom: isTouchDevice ? "calc(env(safe-area-inset-bottom, 20px) + 10px)" : "32px",
           right: isTouchDevice ? "16px" : "32px",
           zIndex: 40,
           padding: isTouchDevice ? "10px 18px" : "14px 28px",
@@ -52,7 +52,8 @@ export default function FloatingStartButton() {
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
-          gap: "10px"
+          gap: "10px",
+          willChange: "transform, opacity"
         }}
       >
         Start with Sooryx

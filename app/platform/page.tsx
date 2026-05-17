@@ -82,7 +82,7 @@ export default function Platform() {
         <div className="absolute bottom-20 right-1/3 w-96 h-96 bg-gradient-to-tl from-purple-300/10 to-pink-200/8 rounded-full blur-3xl" />
       </div>
 
-      <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-40 md:px-10 md:pt-28">
+      <section className="relative mx-auto max-w-7xl px-6 pb-20 pt-28 md:px-10 md:pt-32">
         <div className="pointer-events-none absolute -top-16 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,rgba(251,191,36,0.18),rgba(16,185,129,0.15),rgba(56,189,248,0.12),rgba(251,191,36,0.18))] blur-3xl" />
         <div className="pointer-events-none absolute top-32 right-10 h-96 w-96 rounded-full bg-gradient-to-bl from-emerald-400/12 to-emerald-200/6 blur-3xl hidden lg:block" />
         <div className="pointer-events-none absolute top-1/3 -left-20 h-80 w-80 rounded-full bg-gradient-to-tr from-amber-400/10 to-yellow-200/6 blur-3xl hidden lg:block" />

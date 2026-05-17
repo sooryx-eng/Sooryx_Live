@@ -108,7 +108,7 @@ export default function GlobalNavbar() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 px-4 py-3 md:hidden">
+      <div className="border-t border-white/10 bg-slate-950/95 backdrop-blur-xl px-4 py-3 md:hidden shadow-[0_20px_60px_rgba(0,0,0,0.18)]">
         <div className="space-y-2">
           <Link
             href="/billshield"

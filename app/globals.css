@@ -41,6 +41,13 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
   background-attachment: fixed;
+  touch-action: manipulation;
+}
+
+@media (max-width: 767px) {
+  body {
+    background-attachment: scroll;
+  }
 }
 
 body::before {
