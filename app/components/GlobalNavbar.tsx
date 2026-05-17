@@ -50,7 +50,7 @@ export default function GlobalNavbar() {
 
   return (
     <nav
-      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl shadow-[0_28px_90px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-out md:duration-0 ${
+      className={`sticky inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/90 backdrop-blur-xl transition-transform duration-300 ease-out md:fixed md:duration-0 ${
         isHidden ? "-translate-y-full" : "translate-y-0"
       } md:translate-y-0`}
     >

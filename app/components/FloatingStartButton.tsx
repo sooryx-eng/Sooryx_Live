@@ -9,6 +9,7 @@ export default function FloatingStartButton() {
   const pathname = usePathname();
   const [isHovered, setIsHovered] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -21,13 +22,23 @@ export default function FloatingStartButton() {
     updateDeviceType();
     mediaQuery.addEventListener("change", updateDeviceType);
 
-    return () => mediaQuery.removeEventListener("change", updateDeviceType);
+    const handleScroll = () => setScrollY(window.scrollY);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateDeviceType);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
   
   // Hide on contact and billshield pages
   if (pathname === "/contact" || pathname === "/billshield") {
     return null;
   }
+
+  const isScrolled = scrollY > 140;
+  const isVisible = isTouchDevice ? isScrolled : isHovered;
 
   return (
     <Link href="/contact">
@@ -46,9 +57,11 @@ export default function FloatingStartButton() {
           color: "#020617",
           fontSize: isTouchDevice ? "13px" : "14px",
           fontWeight: "700",
-          opacity: isTouchDevice ? 1 : (isHovered ? 1 : 0),
+          opacity: isVisible ? 1 : 0,
+          pointerEvents: isTouchDevice ? (isVisible ? "auto" : "none") : "auto",
+          transform: isVisible ? "translateY(0)" : "translateY(10px)",
           transition: "opacity 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.2s ease",
-          boxShadow: isHovered ? "0 24px 60px rgba(255, 183, 77, 0.34)" : "0 12px 30px rgba(0, 0, 0, 0.16)",
+          boxShadow: isVisible ? "0 24px 60px rgba(255, 183, 77, 0.34)" : "0 12px 30px rgba(0, 0, 0, 0.16)",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",

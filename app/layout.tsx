@@ -26,7 +26,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-slate-950 text-white pt-32 md:pt-20">
+      <body className="bg-slate-950 text-white pt-36 md:pt-20">
         <PageTitleSetter />
         {/* GLOBAL NAVBAR */}
         <GlobalNavbar />
