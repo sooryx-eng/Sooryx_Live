@@ -5,6 +5,7 @@ import FloatingStartButton from "./components/FloatingStartButton";
 import Footer from "./components/Footer";
 import GlobalNavbar from "./components/GlobalNavbar";
 import PageTitleSetter from "./components/PageTitleSetter";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata = {
   title: "Sooryx",
@@ -35,6 +36,7 @@ export default function RootLayout({
         
         <Footer />
         <FloatingStartButton />
+        <SpeedInsights />
       </body>
     </html>
   );
