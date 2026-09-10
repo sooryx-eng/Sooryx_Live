@@ -173,7 +173,7 @@ export default function BillShieldLogin() {
         <GlowingHeader as="h1" className="mb-4 text-4xl font-bold md:text-5xl">
           One Click Sign In
         </GlowingHeader>
-              <p className="text-lg text-slate-600">Secure access to your BillShield cohort profile with OTP verification.</p>
+              <p className="text-lg text-slate-600">Stay close to your BillShield journey with quick, secure OTP access.</p>
       </div>
 
       <div className="mx-auto max-w-sm">
@@ -349,7 +349,7 @@ export default function BillShieldLogin() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mt-12 space-y-4 rounded-2xl bg-gradient-to-br from-emerald-50/50 to-yellow-50/50 p-6 backdrop-blur"
         >
-          <h3 className="font-bold text-slate-900">One-click cohort access</h3>
+          <h3 className="font-bold text-slate-900">Your solar journey, all in one place</h3>
           <ul className="space-y-3">
             <li className="flex items-center gap-3 text-slate-700">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
@@ -361,13 +361,13 @@ export default function BillShieldLogin() {
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
                 ✓
               </div>
-              View your BillShield cohort profile instantly
+              View your BillShield cohort profile
             </li>
             <li className="flex items-center gap-3 text-slate-700">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
                 ✓
               </div>
-              Follow your solar asset and income participation updates
+              Follow updates about your solar asset and income participation
             </li>
           </ul>
         </motion.div>
