@@ -7,49 +7,44 @@ import Link from 'next/link'
 import GlowingHeader from '@/app/components/GlowingHeader'
 import { initMsg91Widget, retryOtpWithMsg91, sendOtpWithMsg91, verifyOtpWithMsg91 } from '@/lib/msg91Widget'
 
+const USER_STORAGE_KEY = 'billshieldUser'
+const FLOW_STORAGE_KEY = 'billshieldFlow'
+
 export default function BillShieldLogin() {
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
+  const [step, setStep] = useState<'phone' | 'otp'>('phone')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
   const [reqId, setReqId] = useState('')
   const [accessToken, setAccessToken] = useState('')
   const [captchaInitialized, setCaptchaInitialized] = useState(false)
 
   const normalizePhoneForOtp = (value: string) => {
     const digits = value.replace(/\D/g, '')
-
     if (digits.length === 10) {
       return `91${digits}`
     }
-
     if (digits.length === 12 && digits.startsWith('91')) {
       return digits
     }
-
     return ''
   }
 
   useEffect(() => {
-    if (otpSent || captchaInitialized) {
+    if (step !== 'phone' || captchaInitialized) {
       return
     }
 
-    // Add a small delay to ensure DOM is ready after React hydration
     const timer = setTimeout(() => {
       initMsg91Widget('', 'msg91-captcha-login')
-        .then(() => {
-          setCaptchaInitialized(true)
-        })
-        .catch((err) => {
-          console.error('MSG91 widget init failed:', err)
-        })
+        .then(() => setCaptchaInitialized(true))
+        .catch((err) => console.error('MSG91 widget init failed:', err))
     }, 250)
 
     return () => clearTimeout(timer)
-  }, [otpSent, captchaInitialized])
+  }, [step, captchaInitialized])
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,34 +53,21 @@ export default function BillShieldLogin() {
     setLoading(true)
 
     try {
-      if (!phone) {
-        setError('Please enter your phone number')
-        return
-      }
-      if (phone.length < 10) {
-        setError('Please enter a valid 10-digit phone number')
-        return
-      }
-
       const normalizedPhone = normalizePhoneForOtp(phone)
       if (!normalizedPhone) {
         setError('Please enter a valid Indian phone number')
         return
       }
 
-      // Validate via API (registered user check)
       const response = await fetch('/api/billshield/send-otp', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: normalizedPhone, validateOnly: true }),
       })
 
       const data = await response.json()
-
       if (!response.ok) {
-        setError(data.error || 'Failed to send OTP. Please try again.')
+        setError(data.error || 'Unable to start sign in. Please try again.')
         return
       }
 
@@ -96,32 +78,26 @@ export default function BillShieldLogin() {
         )
 
         if (hasWidgetConfig) {
-          setError(sendResult.error || 'Failed to send OTP. Please try again.')
+          setError(sendResult.error || 'OTP send failed. Please try again.')
           return
         }
 
         const fallbackResponse = await fetch('/api/billshield/send-otp', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ phone: normalizedPhone }),
         })
-
         const fallbackData = await fallbackResponse.json()
         if (!fallbackResponse.ok) {
-          setError(fallbackData.error || sendResult.error || 'Failed to send OTP. Please try again.')
+          setError(fallbackData.error || 'OTP send failed. Please try again.')
           return
         }
-
-        setReqId('')
-      } else {
-        setReqId(sendResult.reqId || '')
       }
 
       setPhone(normalizedPhone)
-      setOtpSent(true)
-      setSuccess('OTP sent successfully!')
+      setReqId(sendResult?.reqId || '')
+      setStep('otp')
+      setSuccess('OTP sent successfully. Enter it below to sign in.')
     } catch (err) {
       setError('Failed to send OTP. Please try again.')
     } finally {
@@ -132,15 +108,12 @@ export default function BillShieldLogin() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
     setLoading(true)
 
     try {
-      if (!otp) {
-        setError('Please enter the OTP')
-        return
-      }
-      if (otp.length < 4 || otp.length > 8) {
-        setError('Please enter a valid OTP (4-8 digits)')
+      if (!otp || otp.length < 4 || otp.length > 8) {
+        setError('Enter a valid 4-8 digit OTP')
         return
       }
 
@@ -152,43 +125,33 @@ export default function BillShieldLogin() {
         setReqId(verifyWidgetResult.reqId || reqId)
       }
 
-      console.log('=== LOGIN VERIFY OTP ===')
-      console.log('Phone on client:', phone)
-      console.log('Phone length:', phone.length)
-      console.log('Sending to verify-otp API with phone:', phone)
-
-      // Call API to verify OTP
       const response = await fetch('/api/billshield/verify-otp', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, otp, accessToken: tokenToSend || undefined }),
       })
 
       const data = await response.json()
-
       if (!response.ok) {
-        console.log('Verify OTP failed:', data.error)
-        setError(data.error || 'Invalid OTP. Please try again.')
+        setError(data.error || 'OTP verification failed. Please try again.')
         setOtp('')
         return
       }
 
-      console.log('Verify OTP successful, user data:', data?.user)
-      setSuccess('Login successful!')
-
-      if (data?.user) {
-        sessionStorage.setItem('billshieldUser', JSON.stringify(data.user))
-        sessionStorage.setItem('billshieldFlow', 'signin')
+      if (!data.user) {
+        setError('Unable to sign in right now.')
+        return
       }
-      
-      // Redirect to user dashboard
+
+      sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user))
+      sessionStorage.setItem(FLOW_STORAGE_KEY, 'signin')
+      setSuccess('Signed in successfully. Redirecting to your wallet...')
+
       setTimeout(() => {
         window.location.href = '/billshield/user'
       }, 1000)
     } catch (err) {
-      console.error('Verification error:', err)
+      console.error(err)
       setError('Verification failed. Please try again.')
       setOtp('')
     } finally {
@@ -198,7 +161,6 @@ export default function BillShieldLogin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-amber-50/30 to-emerald-50/30 px-4 py-8 md:py-16">
-      {/* Header */}
       <div className="mb-12 text-center">
         <Link href="/billshield" className="inline-block">
           <motion.div
@@ -209,12 +171,11 @@ export default function BillShieldLogin() {
           </motion.div>
         </Link>
         <GlowingHeader as="h1" className="mb-4 text-4xl font-bold md:text-5xl">
-          Welcome Back
+          One Click Sign In
         </GlowingHeader>
-        <p className="text-lg text-slate-600">Sign in with your phone number</p>
+        <p className="text-lg text-slate-600">Fast access to your BillShield wallet with OTP verification.</p>
       </div>
 
-      {/* Login Card */}
       <div className="mx-auto max-w-sm">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -222,13 +183,10 @@ export default function BillShieldLogin() {
           transition={{ duration: 0.5 }}
           className="rounded-3xl border border-slate-200/70 bg-white/90 p-8 shadow-2xl backdrop-blur"
         >
-          {!otpSent ? (
-            // Step 1: Enter phone number
+          {step === 'phone' ? (
             <form onSubmit={handleSendOtp} className="space-y-6">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Phone Number
-                </label>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Phone Number</label>
                 <div className="relative">
                   <Phone className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-amber-500" />
                   <input
@@ -241,7 +199,6 @@ export default function BillShieldLogin() {
                 </div>
               </div>
 
-              {/* Error Message */}
               {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -253,7 +210,6 @@ export default function BillShieldLogin() {
                 </motion.div>
               )}
 
-              {/* Success Message */}
               {success && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -266,9 +222,7 @@ export default function BillShieldLogin() {
               )}
 
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Verification
-                </label>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Verification</label>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-2">
                   <div id="msg91-captcha-login" className="mx-auto min-h-[78px] max-w-[320px] overflow-hidden" />
                 </div>
@@ -285,12 +239,9 @@ export default function BillShieldLogin() {
               </motion.button>
             </form>
           ) : (
-            // Step 2: Enter OTP
             <form onSubmit={handleVerifyOtp} className="space-y-6">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">
-                  Enter OTP
-                </label>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">Enter OTP</label>
                 <div className="relative">
                   <Shield className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-amber-500" />
                   <input
@@ -302,12 +253,9 @@ export default function BillShieldLogin() {
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-center text-2xl font-bold tracking-widest text-slate-900 placeholder-slate-400 transition focus:border-amber-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-200"
                   />
                 </div>
-                <p className="mt-2 text-xs text-slate-500">
-                  OTP sent to {phone}
-                </p>
+                <p className="mt-2 text-xs text-slate-500">OTP sent to {phone}</p>
               </div>
 
-              {/* Error Message */}
               {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -319,7 +267,6 @@ export default function BillShieldLogin() {
                 </motion.div>
               )}
 
-              {/* Success Message */}
               {success && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -371,8 +318,8 @@ export default function BillShieldLogin() {
                 type="button"
                 onClick={() => {
                   setPhone('')
-                  setOtpSent(false)
                   setOtp('')
+                  setStep('phone')
                   setError('')
                   setSuccess('')
                   setReqId('')
@@ -386,7 +333,6 @@ export default function BillShieldLogin() {
             </form>
           )}
 
-          {/* Sign Up Link */}
           <div className="mt-8 border-t border-slate-200 pt-8">
             <p className="text-center text-slate-600">
               Don't have an account?{' '}
@@ -397,38 +343,31 @@ export default function BillShieldLogin() {
           </div>
         </motion.div>
 
-        {/* Features */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mt-12 space-y-4 rounded-2xl bg-gradient-to-br from-emerald-50/50 to-yellow-50/50 p-6 backdrop-blur"
         >
-          <h3 className="font-bold text-slate-900">What you can do:</h3>
+          <h3 className="font-bold text-slate-900">One-click wallet access</h3>
           <ul className="space-y-3">
             <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex size-6 items-center justify-center rounded-full bg-emerald-200">
-                <span className="text-sm font-bold text-emerald-700">✓</span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
+                ✓
               </div>
-              Buy electricity units at bulk discounts
+              Send OTP and sign in with one click
             </li>
             <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex size-6 items-center justify-center rounded-full bg-emerald-200">
-                <span className="text-sm font-bold text-emerald-700">✓</span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
+                ✓
               </div>
-              View your account balance & transaction history
+              Open your BillShield wallet instantly
             </li>
             <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex size-6 items-center justify-center rounded-full bg-emerald-200">
-                <span className="text-sm font-bold text-emerald-700">✓</span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
+                ✓
               </div>
-              Apply units to any electricity bill
-            </li>
-            <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex size-6 items-center justify-center rounded-full bg-emerald-200">
-                <span className="text-sm font-bold text-emerald-700">✓</span>
-              </div>
-              Track savings in real-time
+              Apply your solar credits to future savings
             </li>
           </ul>
         </motion.div>

@@ -3,9 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function GlobalNavbar() {
   const [isHidden, setIsHidden] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -72,35 +77,35 @@ export default function GlobalNavbar() {
         <div className="hidden flex-1 flex-wrap items-center justify-end gap-2 text-xs md:flex lg:gap-3 lg:text-sm">
           <Link
             href="/billshield"
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-emerald-400 px-6 py-2 text-sm font-semibold text-slate-950 shadow-[0_12px_32px_rgba(251,191,36,0.28)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(251,191,36,0.42)] active:translate-y-0 active:scale-[0.98]"
+            className={`inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-emerald-400 px-6 py-2 text-sm font-semibold text-slate-950 shadow-[0_12px_32px_rgba(251,191,36,0.28)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(251,191,36,0.42)] active:translate-y-0 active:scale-[0.98] ${isActive("/billshield") ? "ring-2 ring-amber-200 ring-offset-2 ring-offset-slate-950 shadow-[0_0_28px_rgba(251,191,36,0.7)]" : ""}`}
             style={{ cursor: "pointer" }}
           >
             BillShield
           </Link>
           <Link
             href="/"
-            className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]"
+            className={`whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98] ${isActive("/") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             style={{ cursor: "pointer" }}
           >
             Home
           </Link>
           <Link
             href="/calculator"
-            className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]"
+            className={`whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98] ${isActive("/calculator") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             style={{ cursor: "pointer" }}
           >
             Calculate Savings
           </Link>
           <Link
             href="/how-it-works"
-            className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]"
+            className={`whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98] ${isActive("/how-it-works") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             style={{ cursor: "pointer" }}
           >
             How it Works
           </Link>
           <Link
             href="/contact"
-            className="whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98]"
+            className={`whitespace-nowrap rounded-full border border-white/25 px-4 py-2 text-white/95 transition duration-200 hover:-translate-y-0.5 hover:border-amber-300/70 hover:bg-white/10 hover:shadow-[0_8px_20px_rgba(251,191,36,0.2)] active:translate-y-0 active:scale-[0.98] ${isActive("/contact") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             style={{ cursor: "pointer" }}
           >
             Contact Us
@@ -127,32 +132,32 @@ export default function GlobalNavbar() {
               gap: "6px",
               fontSize: "14px",
             }}
-            className="w-full transition duration-150 active:scale-[0.99] active:shadow-[0_8px_18px_rgba(251,191,36,0.45)]"
+            className={`w-full transition duration-150 active:scale-[0.99] active:shadow-[0_8px_18px_rgba(251,191,36,0.45)] ${isActive("/billshield") ? "ring-2 ring-amber-200 ring-offset-2 ring-offset-slate-950 shadow-[0_0_28px_rgba(251,191,36,0.7)]" : ""}`}
           >
             BillShield
           </Link>
           <div className="grid grid-cols-2 gap-2">
             <Link
               href="/"
-              className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]"
+              className={`rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)] ${isActive("/") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             >
               Home
             </Link>
             <Link
               href="/calculator"
-              className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]"
+              className={`rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_0_20px_rgba(251,191,36,0.35)] ${isActive("/calculator") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             >
               Savings
             </Link>
             <Link
               href="/how-it-works"
-              className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]"
+              className={`rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_0_20px_rgba(251,191,36,0.35)] ${isActive("/how-it-works") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             >
               How it Works
             </Link>
             <Link
               href="/contact"
-              className="rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_8px_18px_rgba(251,191,36,0.25)]"
+              className={`rounded-full border border-white/20 px-3 py-2 text-center text-sm text-white/90 transition duration-150 active:scale-[0.98] active:border-amber-300 active:bg-white/10 active:text-white active:shadow-[0_0_20px_rgba(251,191,36,0.35)] ${isActive("/contact") ? "border-amber-300 bg-white/10 text-white shadow-[0_0_20px_rgba(251,191,36,0.35)]" : ""}`}
             >
               Contact
             </Link>

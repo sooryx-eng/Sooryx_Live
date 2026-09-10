@@ -68,20 +68,14 @@ export default function BillShield() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="mt-10 flex flex-wrap items-center justify-center gap-4"
+            className="mt-10 mx-auto max-w-2xl rounded-3xl border border-slate-200/70 bg-white/90 p-8 text-center shadow-xl"
           >
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <CheckCircle2 className="size-5 text-emerald-500" />
-              No long-term commitment
-            </div>
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <CheckCircle2 className="size-5 text-emerald-500" />
-              Use anytime, anywhere
-            </div>
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <CheckCircle2 className="size-5 text-emerald-500" />
-              Instant discount applied
-            </div>
+            <p className="text-lg font-semibold text-slate-700">
+              BillShield access and wallet management are temporarily hidden while we finalize the experience.
+            </p>
+            <p className="mt-3 text-sm text-slate-600">
+              Check back soon for one-click sign in and wallet access once the launch is ready.
+            </p>
           </motion.div>
 
         </motion.div>

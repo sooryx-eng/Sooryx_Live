@@ -77,6 +77,7 @@ export default function BillShieldUserPage() {
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-amber-600">BillShield Wallet</p>
             <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">Hi, {user.name}</h1>
+            <p className="mt-2 text-sm text-slate-600">One-click access to your solar credit wallet. Track balance, buy credits, and settle bills from one place.</p>
           </div>
           <button
             onClick={handleSignOut}

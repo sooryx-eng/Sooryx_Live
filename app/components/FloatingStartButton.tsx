@@ -7,11 +7,14 @@ import { useEffect, useState } from "react";
 
 export default function FloatingStartButton() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
+    setMounted(true);
+
     if (typeof window === "undefined") {
       return;
     }
@@ -32,6 +35,10 @@ export default function FloatingStartButton() {
     };
   }, []);
   
+  if (!mounted) {
+    return null;
+  }
+
   // Hide on contact and billshield pages
   if (pathname === "/contact" || pathname === "/billshield") {
     return null;

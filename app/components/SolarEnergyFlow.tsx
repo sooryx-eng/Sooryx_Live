@@ -25,56 +25,38 @@ export default function SolarEnergyFlow({ className = "" }: { className?: string
         />
 
         {/* Energy particles */}
-        <motion.circle
+        <circle
           cx="50"
           cy="100"
           r="4"
           fill="#f59e0b"
-          initial={{ offsetDistance: "0%" }}
-          animate={{ offsetDistance: "100%" }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "linear",
-          }}
           style={{
             offsetPath: "path('M 50 100 Q 100 60, 150 100 T 250 100')",
+            animation: "billshield-dot 4s linear infinite",
           }}
         />
-        
-        <motion.circle
+
+        <circle
           cx="50"
           cy="100"
           r="4"
           fill="#fbbf24"
-          initial={{ offsetDistance: "0%" }}
-          animate={{ offsetDistance: "100%" }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            delay: 1.3,
-            ease: "linear",
-          }}
           style={{
             offsetPath: "path('M 50 100 Q 100 60, 150 100 T 250 100')",
+            animation: "billshield-dot 4s linear infinite",
+            animationDelay: "1.3s",
           }}
         />
 
-        <motion.circle
+        <circle
           cx="50"
           cy="100"
           r="4"
           fill="#f59e0b"
-          initial={{ offsetDistance: "0%" }}
-          animate={{ offsetDistance: "100%" }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            delay: 2.6,
-            ease: "linear",
-          }}
           style={{
             offsetPath: "path('M 50 100 Q 100 60, 150 100 T 250 100')",
+            animation: "billshield-dot 4s linear infinite",
+            animationDelay: "2.6s",
           }}
         />
 

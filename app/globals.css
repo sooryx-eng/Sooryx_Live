@@ -142,6 +142,15 @@ img {
   max-width: 100%;
 }
 
+@keyframes billshield-dot {
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
 @supports (backdrop-filter: blur(0)) {
   .glass-panel,
   .glass-panel-soft {
