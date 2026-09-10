@@ -145,7 +145,7 @@ export default function BillShieldLogin() {
 
       sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user))
       sessionStorage.setItem(FLOW_STORAGE_KEY, 'signin')
-      setSuccess('Signed in successfully. Redirecting to your wallet...')
+      setSuccess('Signed in successfully. Redirecting to your cohort profile...')
 
       setTimeout(() => {
         window.location.href = '/billshield/user'
@@ -173,7 +173,7 @@ export default function BillShieldLogin() {
         <GlowingHeader as="h1" className="mb-4 text-4xl font-bold md:text-5xl">
           One Click Sign In
         </GlowingHeader>
-        <p className="text-lg text-slate-600">Fast access to your BillShield wallet with OTP verification.</p>
+              <p className="text-lg text-slate-600">Secure access to your BillShield cohort profile with OTP verification.</p>
       </div>
 
       <div className="mx-auto max-w-sm">
@@ -349,7 +349,7 @@ export default function BillShieldLogin() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mt-12 space-y-4 rounded-2xl bg-gradient-to-br from-emerald-50/50 to-yellow-50/50 p-6 backdrop-blur"
         >
-          <h3 className="font-bold text-slate-900">One-click wallet access</h3>
+          <h3 className="font-bold text-slate-900">One-click cohort access</h3>
           <ul className="space-y-3">
             <li className="flex items-center gap-3 text-slate-700">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
@@ -361,13 +361,13 @@ export default function BillShieldLogin() {
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
                 ✓
               </div>
-              Open your BillShield wallet instantly
+              View your BillShield cohort profile instantly
             </li>
             <li className="flex items-center gap-3 text-slate-700">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-200 text-emerald-700">
                 ✓
               </div>
-              Apply your solar credits to future savings
+              Follow your solar asset and income participation updates
             </li>
           </ul>
         </motion.div>

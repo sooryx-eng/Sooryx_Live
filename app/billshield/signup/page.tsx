@@ -262,14 +262,14 @@ export default function BillShieldSignup() {
         <GlowingHeader as="h1" className="mb-4 text-4xl font-bold md:text-5xl">
           Join BillShield
         </GlowingHeader>
-        <p className="text-lg text-slate-600">Access digital solar. Save on every bill. Start today.</p>
+        <p className="text-lg text-slate-600">Join the early-access list for solar asset ownership through BillShield.</p>
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
           className="mt-4 inline-block rounded-full bg-gradient-to-r from-amber-100 to-yellow-100 px-4 py-2 text-sm font-bold text-amber-700"
         >
-          🎁 Get ₹500 Solar Credits on Signup
+          ☀️ Be first to review the next solar cohort
         </motion.div>
       </div>
 
@@ -494,20 +494,20 @@ export default function BillShieldSignup() {
           className="mt-12 grid gap-4 sm:grid-cols-2"
         >
           <div className="rounded-2xl bg-gradient-to-br from-amber-50/70 to-yellow-50/70 p-4 backdrop-blur">
-            <h4 className="font-bold text-slate-900">☀️ Solar-Generated</h4>
-            <p className="text-sm text-slate-600">5-10% cheaper than retail electricity</p>
+            <h4 className="font-bold text-slate-900">☀️ Solar Ownership</h4>
+            <p className="text-sm text-slate-600">Participate in an SPV holding a solar asset</p>
           </div>
           <div className="rounded-2xl bg-gradient-to-br from-emerald-50/70 to-green-50/70 p-4 backdrop-blur">
-            <h4 className="font-bold text-slate-900">✨ No Lock-in</h4>
-            <p className="text-sm text-slate-600">Use units anytime, no expiry date</p>
+            <h4 className="font-bold text-slate-900">✨ Cohort Access</h4>
+            <p className="text-sm text-slate-600">Review the offering before you participate</p>
           </div>
           <div className="rounded-2xl bg-gradient-to-br from-blue-50/70 to-cyan-50/70 p-4 backdrop-blur">
-            <h4 className="font-bold text-slate-900">📊 Instant Savings</h4>
-            <p className="text-sm text-slate-600">See reduction on your next bill</p>
+            <h4 className="font-bold text-slate-900">📊 Solar Income</h4>
+            <p className="text-sm text-slate-600">Receive your share under the offering terms</p>
           </div>
           <div className="rounded-2xl bg-gradient-to-br from-purple-50/70 to-pink-50/70 p-4 backdrop-blur">
-            <h4 className="font-bold text-slate-900">🔄 Any DISCOM</h4>
-            <p className="text-sm text-slate-600">Works with all electricity providers</p>
+            <h4 className="font-bold text-slate-900">🔄 No Installation</h4>
+            <p className="text-sm text-slate-600">Participate without installing a solar plant</p>
           </div>
         </motion.div>
       </div>
